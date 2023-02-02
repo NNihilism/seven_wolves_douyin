@@ -4,10 +4,69 @@ package user
 
 import (
 	"context"
+	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
 	"strings"
 )
+
+type ErrCode int64
+
+const (
+	ErrCode_SuccessCode                ErrCode = 0
+	ErrCode_ServiceErrCode             ErrCode = 10001
+	ErrCode_ParamErrCode               ErrCode = 10002
+	ErrCode_UserAlreadyExistErrCode    ErrCode = 10003
+	ErrCode_AuthorizationFailedErrCode ErrCode = 10004
+)
+
+func (p ErrCode) String() string {
+	switch p {
+	case ErrCode_SuccessCode:
+		return "SuccessCode"
+	case ErrCode_ServiceErrCode:
+		return "ServiceErrCode"
+	case ErrCode_ParamErrCode:
+		return "ParamErrCode"
+	case ErrCode_UserAlreadyExistErrCode:
+		return "UserAlreadyExistErrCode"
+	case ErrCode_AuthorizationFailedErrCode:
+		return "AuthorizationFailedErrCode"
+	}
+	return "<UNSET>"
+}
+
+func ErrCodeFromString(s string) (ErrCode, error) {
+	switch s {
+	case "SuccessCode":
+		return ErrCode_SuccessCode, nil
+	case "ServiceErrCode":
+		return ErrCode_ServiceErrCode, nil
+	case "ParamErrCode":
+		return ErrCode_ParamErrCode, nil
+	case "UserAlreadyExistErrCode":
+		return ErrCode_UserAlreadyExistErrCode, nil
+	case "AuthorizationFailedErrCode":
+		return ErrCode_AuthorizationFailedErrCode, nil
+	}
+	return ErrCode(0), fmt.Errorf("not a valid ErrCode string")
+}
+
+func ErrCodePtr(v ErrCode) *ErrCode { return &v }
+func (p *ErrCode) Scan(value interface{}) (err error) {
+	var result sql.NullInt64
+	err = result.Scan(value)
+	*p = ErrCode(result.Int64)
+	return
+}
+
+func (p *ErrCode) Value() (driver.Value, error) {
+	if p == nil {
+		return nil, nil
+	}
+	return int64(*p), nil
+}
 
 type BaseResp struct {
 	StatusCode    int64  `thrift:"status_code,1" frugal:"1,default,i64" json:"status_code"`
@@ -916,6 +975,7 @@ func (p *CreateUserRequest) Field2DeepEqual(src string) bool {
 
 type CreateUserResponse struct {
 	BaseResp *BaseResp `thrift:"base_resp,1" frugal:"1,default,BaseResp" json:"base_resp"`
+	User     *User     `thrift:"user,2" frugal:"2,default,User" json:"user"`
 }
 
 func NewCreateUserResponse() *CreateUserResponse {
@@ -934,16 +994,33 @@ func (p *CreateUserResponse) GetBaseResp() (v *BaseResp) {
 	}
 	return p.BaseResp
 }
+
+var CreateUserResponse_User_DEFAULT *User
+
+func (p *CreateUserResponse) GetUser() (v *User) {
+	if !p.IsSetUser() {
+		return CreateUserResponse_User_DEFAULT
+	}
+	return p.User
+}
 func (p *CreateUserResponse) SetBaseResp(val *BaseResp) {
 	p.BaseResp = val
+}
+func (p *CreateUserResponse) SetUser(val *User) {
+	p.User = val
 }
 
 var fieldIDToName_CreateUserResponse = map[int16]string{
 	1: "base_resp",
+	2: "user",
 }
 
 func (p *CreateUserResponse) IsSetBaseResp() bool {
 	return p.BaseResp != nil
+}
+
+func (p *CreateUserResponse) IsSetUser() bool {
+	return p.User != nil
 }
 
 func (p *CreateUserResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -968,6 +1045,16 @@ func (p *CreateUserResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 1:
 			if fieldTypeId == thrift.STRUCT {
 				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1013,6 +1100,14 @@ func (p *CreateUserResponse) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *CreateUserResponse) ReadField2(iprot thrift.TProtocol) error {
+	p.User = NewUser()
+	if err := p.User.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *CreateUserResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("CreateUserResponse"); err != nil {
@@ -1021,6 +1116,10 @@ func (p *CreateUserResponse) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
 			goto WriteFieldError
 		}
 
@@ -1059,6 +1158,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
+func (p *CreateUserResponse) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user", thrift.STRUCT, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.User.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
 func (p *CreateUserResponse) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1075,12 +1191,22 @@ func (p *CreateUserResponse) DeepEqual(ano *CreateUserResponse) bool {
 	if !p.Field1DeepEqual(ano.BaseResp) {
 		return false
 	}
+	if !p.Field2DeepEqual(ano.User) {
+		return false
+	}
 	return true
 }
 
 func (p *CreateUserResponse) Field1DeepEqual(src *BaseResp) bool {
 
 	if !p.BaseResp.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+func (p *CreateUserResponse) Field2DeepEqual(src *User) bool {
+
+	if !p.User.DeepEqual(src) {
 		return false
 	}
 	return true

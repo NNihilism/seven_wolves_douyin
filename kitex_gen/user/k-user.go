@@ -785,6 +785,20 @@ func (p *CreateUserResponse) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 2:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -833,6 +847,19 @@ func (p *CreateUserResponse) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *CreateUserResponse) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := NewUser()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.User = tmp
+	return offset, nil
+}
+
 // for compatibility
 func (p *CreateUserResponse) FastWrite(buf []byte) int {
 	return 0
@@ -843,6 +870,7 @@ func (p *CreateUserResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.Bi
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "CreateUserResponse")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -854,6 +882,7 @@ func (p *CreateUserResponse) BLength() int {
 	l += bthrift.Binary.StructBeginLength("CreateUserResponse")
 	if p != nil {
 		l += p.field1Length()
+		l += p.field2Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -868,10 +897,26 @@ func (p *CreateUserResponse) fastWriteField1(buf []byte, binaryWriter bthrift.Bi
 	return offset
 }
 
+func (p *CreateUserResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user", thrift.STRUCT, 2)
+	offset += p.User.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *CreateUserResponse) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("base_resp", thrift.STRUCT, 1)
 	l += p.BaseResp.BLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *CreateUserResponse) field2Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("user", thrift.STRUCT, 2)
+	l += p.User.BLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }

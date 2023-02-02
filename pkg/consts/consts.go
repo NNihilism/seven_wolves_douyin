@@ -5,6 +5,7 @@ const (
 	UserServiceName = "user"
 	ApiServiceName  = "api"
 
+	//
 	ExportEndpoint = ":4317"
 
 	// ECTD server register and find

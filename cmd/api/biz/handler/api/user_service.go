@@ -6,6 +6,8 @@ import (
 	"context"
 
 	api "douyin/cmd/api/biz/model/api"
+	"douyin/cmd/api/rpc"
+	"douyin/kitex_gen/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -38,7 +40,23 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(api.UserResp)
+	// userClient.CreateUser()
+	rpcResp, err := rpc.CreateUser(ctx, &user.CreateUserRequest{
+		Username: req.Name,
+		Password: req.Pwd,
+	})
+
+	// program error, not business error
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, nil)
+	}
+
+	resp := &api.UserResp{
+		StatusCode: rpcResp.BaseResp.StatusCode,
+		StatusMsg:  rpcResp.BaseResp.StatusMessage,
+		UserID:     rpcResp.User.Id,
+		Token:      "", // token is ignored temporarily
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }

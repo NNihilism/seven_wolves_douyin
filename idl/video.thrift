@@ -51,7 +51,7 @@ struct PublishActionResponse {
 
 struct PublishListRequest {
     1: required i64 user_id// 用户id
-    2:required string token // 用户鉴权token
+    2: required string token // 用户鉴权token
 }
 
 struct PublishListResponse {

@@ -8,13 +8,15 @@ require (
 	github.com/apache/thrift v0.13.0
 	github.com/cloudwego/hertz v0.5.1
 	github.com/cloudwego/kitex v0.4.4
+	github.com/google/uuid v1.1.2
 	github.com/kitex-contrib/obs-opentelemetry v0.1.0
 	github.com/kitex-contrib/registry-etcd v0.1.0
+	gorm.io/driver/mysql v1.4.5
+	gorm.io/gorm v1.24.5
 	gorm.io/plugin/opentelemetry v0.1.0
 )
 
 require (
-	github.com/aliyun/aliyun-oss-go-sdk v2.2.6+incompatible // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.2 // indirect
 	github.com/bytedance/gopkg v0.0.0-20220531084716-665b4f21126f // indirect
 	github.com/bytedance/sonic v1.5.0 // indirect
@@ -82,11 +84,8 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220817070843-5a390386f1f2 // indirect
 	golang.org/x/text v0.3.6 // indirect
-	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
 	google.golang.org/grpc v1.46.2 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/mysql v1.4.5 // indirect
-	gorm.io/gorm v1.24.5 // indirect
 )

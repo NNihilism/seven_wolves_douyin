@@ -1,8 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"douyin/cmd/video/dal/db"
 	video "douyin/kitex_gen/video"
+	"fmt"
+	"github.com/google/uuid"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"time"
 )
 
 // VideoServiceImpl implements the last service interface defined in the IDL.
@@ -17,7 +25,48 @@ func (s *VideoServiceImpl) GetFeed(ctx context.Context, req *video.FeedRequest) 
 // PublishVideo implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishActionRequest) (resp *video.PublishActionResponse, err error) {
 	// TODO: Your code here...
-	return
+
+	// todo: 1、鉴权
+
+	// 从用户业务中，通过token获取userId
+	var anchorId int64
+
+	// 随机生成一个文件名
+	fileName := uuid.New().String()
+
+	// 将视频流写到本地文件中，先不考虑用云服务存储
+	file, err := os.OpenFile(filepath.Base("./"+fileName), os.O_CREATE, fs.ModeAppend)
+	if err != nil {
+		fmt.Println("create file error, fileName is: ", fileName)
+		return &video.PublishActionResponse{StatusCode: -1}, err
+	}
+
+	writer := bufio.NewWriter(file)
+	_, err = writer.Write(req.Data)
+	if err != nil {
+		fmt.Println("write into server error, video's title is : ", req.Title)
+		return &video.PublishActionResponse{StatusCode: -1}, err
+	}
+	// 写成功后存入数据库
+	playUrl := "接口前缀" + fileName
+	coverUrl := "暂时为空，官方给的结构体定义没有它"
+
+	err = db.CreateVideo(db.Video{
+		AnchorId:    anchorId,
+		PlayUrl:     playUrl,
+		CoverUrl:    coverUrl,
+		Title:       req.Title,
+		PublishTime: time.Now(),
+	})
+	if err != nil {
+		// 存入数据库失败，需要将文件删掉
+		os.Remove(filepath.Base("./" + fileName))
+
+		fmt.Println("write into server error, video's title is : ", req.Title)
+		return &video.PublishActionResponse{StatusCode: -1}, err
+	}
+
+	return &video.PublishActionResponse{StatusCode: 0}, nil
 }
 
 // GetPublishVideoList implements the VideoServiceImpl interface.

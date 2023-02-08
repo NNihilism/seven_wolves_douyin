@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"douyin/cmd/video/pack"
+	"douyin/cmd/video/service"
 	video "douyin/kitex_gen/video"
 )
 
@@ -11,8 +13,13 @@ type VideoServiceImpl struct{}
 // GetFeed implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) GetFeed(ctx context.Context, req *video.FeedRequest) (resp *video.FeedResponse, err error) {
 	// TODO: Your code here...
-
-	return
+	resp = new(video.FeedResponse)
+	videoList, err := service.NewVideoService(ctx).GetFeed(req)
+	resp.SetVideoList(pack.CovertList(videoList))
+	resp.SetStatusCode(0)
+	nextTime := videoList[len(videoList)-1].CreatedAt.Unix()
+	resp.SetNextTime(&nextTime)
+	return resp,nil
 }
 
 // PublishVideo implements the VideoServiceImpl interface.

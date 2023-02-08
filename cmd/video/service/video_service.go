@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"douyin/cmd/video/dao"
-	"douyin/cmd/video/pack"
 	"douyin/kitex_gen/video"
 )
 
@@ -14,14 +13,12 @@ func NewVideoService(ctx context.Context)*VideoService{
 	return &VideoService{ctx: ctx}
 }
 
-func (service *VideoService)GetFeed(req *video.FeedRequest)([]*video.Video,error){
-	var resVideos []*video.Video
+func (service *VideoService)GetFeed(req *video.FeedRequest)([]*dao.Video,error){
 	videosDbs, err := dao.GetFeed(service.ctx, req.GetLatestTime(), req.GetToken())
 	if err!=nil{
 		return nil,err
 	}
-	resVideos = pack.CovertList(videosDbs)
-	return resVideos,nil
+	return videosDbs,nil
 }
 func (service *VideoService)PublishVideo(req *video.PublishActionRequest){
 

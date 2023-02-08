@@ -20,6 +20,7 @@ type VideoServiceImpl struct{}
 // GetFeed implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) GetFeed(ctx context.Context, req *video.FeedRequest) (resp *video.FeedResponse, err error) {
 	// TODO: Your code here...
+
 	return
 }
 

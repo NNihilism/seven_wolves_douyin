@@ -24,4 +24,9 @@ const (
 	VideoCoverUrlPrefix = "暂时为空，官方给的结构体定义没有它"
 
 	//
+
+	//video
+	BaseIP="127.0.0.1"
+	VideoMySQLDefaultDSN = "root:A1548223199@tcp(localhost:3306)/douyin?charset=utf8&parseTime=True&loc=Local"
+	VideoServicePort=":8083"
 )

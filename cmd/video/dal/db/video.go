@@ -24,7 +24,10 @@ func QueryVideoById(ctx context.Context, videoId int64) (video Video, err error)
 	return Video{}, nil
 }
 
-func CreateVideo(video Video) error {
-
+func CreateVideo(video *Video) error {
+	result := DB.Create(&video)
+	if result.Error != nil {
+		return result.Error
+	}
 	return nil
 }

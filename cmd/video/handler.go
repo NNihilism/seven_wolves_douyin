@@ -5,6 +5,7 @@ import (
 	"context"
 	"douyin/cmd/video/dal/db"
 	video "douyin/kitex_gen/video"
+	"douyin/pkg/consts"
 	"fmt"
 	"github.com/google/uuid"
 	"io/fs"
@@ -31,6 +32,8 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 	// 从用户业务中，通过token获取userId
 	var anchorId int64
 
+	anchorId = 666
+
 	// 随机生成一个文件名
 	fileName := uuid.New().String()
 
@@ -40,6 +43,7 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 		fmt.Println("create file error, fileName is: ", fileName)
 		return &video.PublishActionResponse{StatusCode: -1}, err
 	}
+	defer file.Close()
 
 	writer := bufio.NewWriter(file)
 	_, err = writer.Write(req.Data)
@@ -47,11 +51,13 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 		fmt.Println("write into server error, video's title is : ", req.Title)
 		return &video.PublishActionResponse{StatusCode: -1}, err
 	}
-	// 写成功后存入数据库
-	playUrl := "接口前缀" + fileName
-	coverUrl := "暂时为空，官方给的结构体定义没有它"
 
-	err = db.CreateVideo(db.Video{
+	// 写成功后存入数据库
+	playUrl := consts.VideoPlayUrlPrefix + fileName
+	// todo 这里需要后续完善，封面的url
+	coverUrl := consts.VideoCoverUrlPrefix + ""
+
+	err = db.CreateVideo(&db.Video{
 		AnchorId:    anchorId,
 		PlayUrl:     playUrl,
 		CoverUrl:    coverUrl,

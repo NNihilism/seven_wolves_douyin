@@ -16,8 +16,12 @@ const (
 	VideoDBPassword = "hjh123123"
 	VideoDBAddress  = "192.168.75.100:3306"
 	VideoDBName     = "douyin"
-
 	VideoTableName  = "video"
 	VideoDefaultDSN = VideoDBUserName + ":" + VideoDBPassword + "@tcp(" + VideoDBAddress + ")/" + VideoDBName + "?charset=utf8&parseTime=True&loc=Local"
+
+	// todo 需要完善的常数定义
+	VideoPlayUrlPrefix  = "接口前缀"
+	VideoCoverUrlPrefix = "暂时为空，官方给的结构体定义没有它"
+
 	//
 )

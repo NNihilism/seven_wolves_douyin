@@ -8,10 +8,11 @@ require (
 	github.com/apache/thrift v0.13.0
 	github.com/cloudwego/hertz v0.5.1
 	github.com/cloudwego/kitex v0.4.4
+	github.com/google/uuid v1.1.2
 	github.com/kitex-contrib/obs-opentelemetry v0.1.0
 	github.com/kitex-contrib/registry-etcd v0.1.0
 	gorm.io/driver/mysql v1.4.5
-	gorm.io/gorm v1.23.8
+	gorm.io/gorm v1.24.5
 	gorm.io/plugin/opentelemetry v0.1.0
 )
 

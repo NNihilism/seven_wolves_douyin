@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"context"
+	"douyin/cmd/video/dao"
 	"douyin/cmd/video/pack"
 	"douyin/cmd/video/service"
-	"douyin/cmd/video/dal/db"
 	video "douyin/kitex_gen/video"
 	"douyin/pkg/consts"
 	"fmt"
@@ -13,7 +13,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 // VideoServiceImpl implements the last service interface defined in the IDL.
@@ -38,14 +37,14 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 	// todo: 1、鉴权
 
 	// 从用户业务中，通过token获取userId
-	var anchorId int64
+	var authorId int64
 
-	anchorId = 666
+	authorId = 666
 
 	// 随机生成一个文件名
 	fileName := uuid.New().String()
 
-	// 将视频流写到本地文件中，先不考虑用云服务存储
+	// 将视频流写到本地文件中，先不考虑用云服务存储 TODO:路径前缀
 	file, err := os.OpenFile(filepath.Base("./"+fileName), os.O_CREATE, fs.ModeAppend)
 	if err != nil {
 		fmt.Println("create file error, fileName is: ", fileName)
@@ -65,13 +64,7 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 	// todo 这里需要后续完善，封面的url
 	coverUrl := consts.VideoCoverUrlPrefix + ""
 
-	err = db.CreateVideo(&db.Video{
-		AnchorId:    anchorId,
-		PlayUrl:     playUrl,
-		CoverUrl:    coverUrl,
-		Title:       req.Title,
-		PublishTime: time.Now(),
-	})
+	err = service.NewVideoService(ctx).PublishVideo(req))
 	if err != nil {
 		// 存入数据库失败，需要将文件删掉
 		os.Remove(filepath.Base("./" + fileName))

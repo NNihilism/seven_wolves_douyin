@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"context"
+	"douyin/cmd/video/dal/db"
 	"douyin/cmd/video/pack"
 	"douyin/cmd/video/service"
-	"douyin/cmd/video/dal/db"
 	video "douyin/kitex_gen/video"
 	"douyin/pkg/consts"
 	"fmt"
@@ -28,7 +28,7 @@ func (s *VideoServiceImpl) GetFeed(ctx context.Context, req *video.FeedRequest) 
 	resp.SetStatusCode(0)
 	nextTime := videoList[len(videoList)-1].CreatedAt.Unix()
 	resp.SetNextTime(&nextTime)
-	return resp,nil
+	return resp, nil
 }
 
 // PublishVideo implements the VideoServiceImpl interface.

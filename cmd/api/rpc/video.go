@@ -2,31 +2,41 @@ package rpc
 
 import (
 	"context"
-	"douyin/kitex_gen/video"
+	httpVideo "douyin/cmd/api/biz/model/video"
+	rpcVideo "douyin/kitex_gen/video"
 	"douyin/kitex_gen/video/videoservice"
 	"douyin/pkg/consts"
 	"github.com/cloudwego/kitex/client"
 	"log"
 )
 
-var videoClient videoservice.Client
-
-func InitVideoClient() {
+func InitVideoClient() (videoservice.Client, error) {
 
 	var err error
-	videoClient, err = videoservice.NewClient("video_module", client.WithHostPorts(consts.VideoServerHost+consts.VideoServerPort))
+	videoClient, err := videoservice.NewClient("video_module", client.WithHostPorts(consts.VideoServerHost+consts.VideoServerPort))
 
 	if err != nil {
 		log.Fatal(err)
-		return
+		return nil, err
 	}
+	return videoClient, nil
 }
-func PublishVideo(ctx context.Context, req *video.PublishActionRequest) (r *video.PublishActionResponse, err error) {
-	resp, err := videoClient.PublishVideo(ctx, req)
+func PublishVideo(client videoservice.Client, ctx context.Context, httpReq *httpVideo.PublishActionRequest) (r *rpcVideo.PublishActionResponse, err error) {
+
+	// todo 根据httpReq中的token进行鉴权，可能不需要在服务内部写
+
+	// 封装rpc请求对象
+	rpcReq := rpcVideo.PublishActionRequest{
+		Token: httpReq.Token,
+		Data:  httpReq.Data,
+		Title: httpReq.Title,
+	}
+	// 发起rpc调用
+	resp, err := client.PublishVideo(ctx, &rpcReq)
 
 	if err != nil {
 		log.Fatal(err)
-		return &video.PublishActionResponse{StatusCode: -1}, err
+		return &rpcVideo.PublishActionResponse{StatusCode: -1}, err
 	}
 
 	return resp, nil

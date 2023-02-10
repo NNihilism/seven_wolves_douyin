@@ -5,9 +5,10 @@ package api
 import (
 	"context"
 	"douyin/cmd/api/biz/model/video"
-
+	"douyin/cmd/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"log"
 )
 
 // GetFeed .
@@ -37,7 +38,13 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(video.PublishActionResponse)
+	// 调用rpc
+	client, err := rpc.InitVideoClient()
+	if err != nil {
+		log.Fatal("failed to connect to VideoService")
+		return
+	}
+	resp, err := rpc.PublishVideo(client, ctx, &req)
 
 	c.JSON(consts.StatusOK, resp)
 }

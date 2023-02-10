@@ -58,7 +58,7 @@ func (service *VideoService)PublishVideo(req *video.PublishActionRequest)(error)
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	})
-	return nil
+	return err
 }
 
 

@@ -4,40 +4,75 @@ package api
 
 import (
 	"context"
-	"douyin/cmd/api/biz/model/video"
-
+	httpVideo "douyin/cmd/api/biz/model/video"
+	"douyin/cmd/api/rpc"
+	rpcVideo "douyin/kitex_gen/video"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"io/ioutil"
 )
 
 // GetFeed .
 // @router /douyin/feed [GET]
 func GetFeed(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req video.FeedRequest
+	var req httpVideo.FeedRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+	params := &rpcVideo.FeedRequest{}
+	token := req.GetToken()
+	latestTime := req.GetLatestTime()
+	params.SetToken(&token)
+	params.SetLatestTime(&latestTime)
 
-	resp := new(video.FeedResponse)
-
+	resp, err := rpc.GetFeed(ctx, params)
 	c.JSON(consts.StatusOK, resp)
 }
 
 // PublishVideo .
 // @router /douyin/publish/action [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req video.PublishActionRequest
-	err = c.BindAndValidate(&req)
+	var req httpVideo.PublishActionRequest
+	 c.BindAndValidate(&req)
+/*	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}*/
+	params := &rpcVideo.PublishActionRequest{}
+	token := c.FormValue("token")
+	title := c.FormValue("title")
+	data, err := c.FormFile("data")
+	fmt.Println(data.Size)
+	if err != nil{
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	file, err := data.Open()
+	defer file.Close()
+	if err != nil{
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	fileData,err := ioutil.ReadAll(file)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+	fmt.Printf("token:%v\ntitle:%v\ndataLen:%v\n",string(token),string(title),len(fileData))
+	if string(token) ==""{
+		c.Status(401)
+		return
+	}
+	params.SetToken(string(token))
+	params.SetTitle(string(title))
+	params.SetData(fileData)
+	//resp,err := rpc.PublishVideo(ctx,params)
 
-	resp := new(video.PublishActionResponse)
+	resp,_ := rpc.PublishVideo(ctx,params)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -46,14 +81,14 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/publish/list [GET]
 func GetPublishVideoList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req video.PublishListRequest
+	var req httpVideo.PublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(video.PublishListResponse)
+	resp := new(httpVideo.PublishListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

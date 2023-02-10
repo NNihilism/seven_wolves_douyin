@@ -30,5 +30,10 @@ func (vh *viewHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
  */
 func main() {
 	http.Handle("/", new(viewHandler))
-	http.ListenAndServe(consts.VideoPlayServicePort, nil)
+	err := http.ListenAndServe(consts.VideoPlayServicePort, nil)
+	if err != nil {
+		fmt.Println("视频流服务启动失败")
+		return
+	}
+
 }

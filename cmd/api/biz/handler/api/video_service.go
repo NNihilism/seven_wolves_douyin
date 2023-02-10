@@ -4,8 +4,8 @@ package api
 
 import (
 	"context"
-	"douyin/cmd/api/biz/model/video"
-
+	"douyin/cmd/api/rpc"
+	"douyin/kitex_gen/video"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -20,9 +20,16 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-
-	resp := new(video.FeedResponse)
-
+	reqParams := &video.FeedRequest{}
+	latestTime := req.GetLatestTime()
+	token := req.GetToken()
+	if latestTime!=0 {
+		reqParams.SetLatestTime(&latestTime)
+	}
+	if token!=""{
+		reqParams.SetToken(&token)
+	}
+	resp, err := rpc.GetFeed(ctx,reqParams)
 	c.JSON(consts.StatusOK, resp)
 }
 

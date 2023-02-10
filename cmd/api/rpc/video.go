@@ -14,12 +14,20 @@ var videoClient videoservice.Client
 func InitVideoClient() {
 
 	var err error
-	videoClient, err = videoservice.NewClient("video_module", client.WithHostPorts(consts.VideoServerHost+consts.VideoServerPort))
+	videoClient, err = videoservice.NewClient(consts.VideoServerName, client.WithHostPorts(consts.VideoServerHost+consts.VideoServerPort))
 
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
+}
+func GetFeed(ctx context.Context, req *video.FeedRequest) (resp *video.FeedResponse, err error) {
+	resp,err = videoClient.GetFeed(ctx,req)
+	if err != nil {
+		log.Fatal(err)
+		return &video.FeedResponse{StatusCode: -1}, err
+	}
+	return resp, nil
 }
 func PublishVideo(ctx context.Context, req *video.PublishActionRequest) (r *video.PublishActionResponse, err error) {
 	resp, err := videoClient.PublishVideo(ctx, req)

@@ -19,16 +19,19 @@ func (v *Video) TableName() string{
 }
 func GetFeed(ctx context.Context,latestTime int64,token string)([]*Video,error){
 	var videos []*Video
-	condition := make(map[string]interface{})
+	wrapper := make(map[string]interface{})
 	if latestTime != 0{
-		condition["created_at"]=latestTime
+		wrapper["created_at"]=latestTime
 	}
-	err := DB.WithContext(ctx).Where(condition).Find(&videos).Error
+	err := DB.WithContext(ctx).Where(wrapper).Find(&videos).Error
 	if err!= nil{
 		return nil, err
 	}
 	return videos,nil
 }
-
+func CreateVideo(ctx context.Context, v *Video)error {
+	err := DB.WithContext(ctx).Create(v).Error
+	return err
+}
 
 

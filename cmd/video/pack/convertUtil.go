@@ -7,7 +7,7 @@ import (
 
 func ConvertOne(v *dao.Video)*video.Video{
 	return &video.Video{
-		Id: int64(v.ID),
+		Id: int64(v.Id),
 		PlayUrl: v.PlayUrl,
 		CoverUrl: v.CoverUrl,
 		Title: v.Title,

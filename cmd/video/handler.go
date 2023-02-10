@@ -5,6 +5,7 @@ import (
 	"douyin/cmd/video/pack"
 	"douyin/cmd/video/service"
 	video "douyin/kitex_gen/video"
+	"log"
 )
 
 // VideoServiceImpl implements the last service interface defined in the IDL.
@@ -26,9 +27,17 @@ func (s *VideoServiceImpl) GetFeed(ctx context.Context, req *video.FeedRequest) 
 func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishActionRequest) (resp *video.PublishActionResponse, err error) {
 	// TODO: Your code here...
 	resp = new(video.PublishActionResponse)
-	err = service.NewVideoService(ctx).PublishVideo(req)
+	msg := "ok"
 	resp.SetStatusCode(0)
-
+	resp.SetStatusMsg(&msg)
+	err = service.NewVideoService(ctx).PublishVideo(req)
+	if err != nil{
+		msg = "publish error"
+		resp.SetStatusCode(-1)
+		log.Println("发布失败")
+		return resp,err
+	}
+	return resp,nil
 }
 
 // GetPublishVideoList implements the VideoServiceImpl interface.

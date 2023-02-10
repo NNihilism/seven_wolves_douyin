@@ -4,9 +4,8 @@ package api
 
 import (
 	"context"
-	"douyin/cmd/api/rpc"
-	"douyin/kitex_gen/video"
-	"fmt"
+	"douyin/cmd/api/biz/model/video"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -21,16 +20,9 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	reqParams := &video.FeedRequest{}
-	latestTime := req.GetLatestTime()
-	token := req.GetToken()
-	if latestTime!=0 {
-		reqParams.SetLatestTime(&latestTime)
-	}
-	if token!=""{
-		reqParams.SetToken(&token)
-	}
-	resp, err := rpc.GetFeed(ctx,reqParams)
+
+	resp := new(video.FeedResponse)
+
 	c.JSON(consts.StatusOK, resp)
 }
 
@@ -44,19 +36,9 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	token := req.GetToken()
-	title := req.GetTitle()
-	data  := req.GetData()
-	fmt.Printf("token:%v\n,title:%v\n,dataLen:%v\n",token,title,len(data))
-	if token ==""{
-		c.Status(401)
-		return
-	}
-	resp, err := rpc.PublishVideo(ctx, &video.PublishActionRequest{
-		Token: token,
-		Data: data,
-		Title: title,
-	})
+
+	resp := new(video.PublishActionResponse)
+
 	c.JSON(consts.StatusOK, resp)
 }
 

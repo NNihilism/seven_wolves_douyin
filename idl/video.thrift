@@ -39,9 +39,9 @@ struct FeedResponse {
 }
 
 struct PublishActionRequest {
-    1: required string token    (api.query="token")            // 用户鉴权token
-    2: required binary data     (api.query="data")             // 视频数据
-    3: required string title    (api.query="title")            // 视频标题
+    1: required string token    (api.form="token")            // 用户鉴权token
+    2: required binary data     (api.form="data")             // 视频数据
+    3: required string title    (api.form="title")            // 视频标题
 }
 
 struct PublishActionResponse {

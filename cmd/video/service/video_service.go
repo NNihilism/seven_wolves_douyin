@@ -29,8 +29,7 @@ func (service *VideoService)GetFeed(req *video.FeedRequest)([]*dao.Video,error){
 }
 func (service *VideoService)PublishVideo(req *video.PublishActionRequest)(error){
 	// 从用户业务中，通过token获取userId
-	var authorId int64
-	authorId = 666
+	authorId := 666
 
 	// 随机生成一个文件名
 	fileName := uuid.New().String()

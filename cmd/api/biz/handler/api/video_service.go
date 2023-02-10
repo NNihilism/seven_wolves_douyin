@@ -6,6 +6,7 @@ import (
 	"context"
 	"douyin/cmd/api/rpc"
 	"douyin/kitex_gen/video"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -43,9 +44,19 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-
-	resp := new(video.PublishActionResponse)
-
+	token := req.GetToken()
+	title := req.GetTitle()
+	data  := req.GetData()
+	fmt.Printf("token:%v\n,title:%v\n,dataLen:%v\n",token,title,len(data))
+	if token ==""{
+		c.Status(401)
+		return
+	}
+	resp, err := rpc.PublishVideo(ctx, &video.PublishActionRequest{
+		Token: token,
+		Data: data,
+		Title: title,
+	})
 	c.JSON(consts.StatusOK, resp)
 }
 

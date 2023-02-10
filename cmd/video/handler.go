@@ -49,7 +49,7 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 	writer := bufio.NewWriter(file)
 	_, err = writer.Write(req.Data)
 	if err != nil {
-		fmt.Println("write into server error, video's title is : ", req.Title)
+		fmt.Println("write into server error, video_module's title is : ", req.Title)
 		return &video.PublishActionResponse{StatusCode: -1}, err
 	}
 
@@ -69,7 +69,7 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 		// 存入数据库失败，需要将文件删掉
 		os.Remove(filepath.Base("./" + fileName))
 
-		fmt.Println("write into server error, video's title is : ", req.Title)
+		fmt.Println("write into server error, video_module's title is : ", req.Title)
 		return &video.PublishActionResponse{StatusCode: -1}, err
 	}
 

@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// DB -- global connection of video module
+// DB -- global connection of video_module module
 var DB *gorm.DB
 
 func Init() {

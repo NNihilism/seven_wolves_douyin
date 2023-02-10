@@ -24,7 +24,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"GetPublishVideoList": kitex.NewMethodInfo(getPublishVideoListHandler, newVideoServiceGetPublishVideoListArgs, newVideoServiceGetPublishVideoListResult, false),
 	}
 	extra := map[string]interface{}{
-		"PackageName": "video",
+		"PackageName": "video_module",
 	}
 	svcInfo := &kitex.ServiceInfo{
 		ServiceName:     serviceName,

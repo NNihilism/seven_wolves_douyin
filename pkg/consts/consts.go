@@ -12,11 +12,14 @@ const (
 	ETCDAddress = "127.0.0.1:2379"
 
 	// video module
+	VideoServerHost = "127.0.0.1:"
+	VideoServerPort = "8083"
+
 	VideoDBUserName = "root"
 	VideoDBPassword = "hjh123123"
 	VideoDBAddress  = "192.168.75.100:3306"
 	VideoDBName     = "douyin"
-	VideoTableName  = "video"
+	VideoTableName  = "video_module"
 	VideoDefaultDSN = VideoDBUserName + ":" + VideoDBPassword + "@tcp(" + VideoDBAddress + ")/" + VideoDBName + "?charset=utf8&parseTime=True&loc=Local"
 	// todo 需要完善的常数定义
 	VideoPlayUrlPrefix  = "接口前缀"

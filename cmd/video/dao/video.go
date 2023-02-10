@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -12,8 +11,8 @@ type Video struct{
 	PlayUrl 		string `json:"play_url"`
 	CoverUrl 		string `json:"cover_url"`
 	Title 			string `json:"title"`
-	CreatedAt 		time.Time
-	UpdatedAt 		time.Time
+	CreatedAt 		time.Time `json:"created_at"`
+	UpdatedAt 		time.Time `json:"updated_at"`
 }
 func (v *Video) TableName() string{
 	return "video"
@@ -30,7 +29,6 @@ func GetFeed(ctx context.Context,latestTime int64,token string)([]*Video,error){
 	}
 	return videos,nil
 }
-func
 
 
 

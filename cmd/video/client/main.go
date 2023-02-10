@@ -5,8 +5,10 @@ import (
 	"context"
 	video2 "douyin/kitex_gen/video"
 	video "douyin/kitex_gen/video/videoservice"
+	//"douyin/pkg/consts"
 	"fmt"
 	"github.com/cloudwego/kitex/client"
+	//etcd "github.com/kitex-contrib/registry-etcd"
 	"io"
 	"log"
 	"os"
@@ -14,7 +16,14 @@ import (
 )
 
 func main() {
-	client, err := video.NewClient("video", client.WithHostPorts("0.0.0.0:8888"))
+
+	//r, err := etcd.NewEtcdResolver([]string{consts.ETCDAddress})
+	//if err != nil {
+	//	panic(err)
+	//}
+	client, err := video.NewClient("video_module", client.WithHostPorts("0.0.0.0:8083"))
+
+	//client, err := video_module.NewClient("video_module", client.WithResolver(r))
 
 	if err != nil {
 		log.Fatal(err)
@@ -25,13 +34,13 @@ func main() {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	r := bufio.NewReader(file)
+	reader := bufio.NewReader(file)
 
 	videoData := make([]byte, 0)
 	buf := make([]byte, 1024*1024)
 
 	for {
-		len, err := r.Read(buf)
+		len, err := reader.Read(buf)
 		if err != nil && err != io.EOF {
 			log.Fatal(err)
 			// 处理异常

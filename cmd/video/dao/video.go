@@ -2,30 +2,33 @@ package dao
 
 import (
 	"context"
-	"gorm.io/gorm"
+	"time"
 )
 
-type Video struct {
-	gorm.Model
-	Id       int64  `json:"id"`
-	AuthorId int64  `json:"author_id"`
-	PlayUrl  string `json:"play_url"`
-	CoverUrl string `json:"cover_url"`
-	Title    string `json:"title"`
+type Video struct{
+	Id              int64  `json:"id"`
+	AuthorId		int64  `json:"author_id"`
+	PlayUrl 		string `json:"play_url"`
+	CoverUrl 		string `json:"cover_url"`
+	Title 			string `json:"title"`
+	CreatedAt 		time.Time `json:"created_at"`
+	UpdatedAt 		time.Time `json:"updated_at"`
 }
-
-func (v *Video) TableName() string {
-	return "video_module"
+func (v *Video) TableName() string{
+	return "video"
 }
-func GetFeed(ctx context.Context, latestTime int64, token string) ([]*Video, error) {
+func GetFeed(ctx context.Context,latestTime int64,token string)([]*Video,error){
 	var videos []*Video
 	condition := make(map[string]interface{})
-	if latestTime != 0 {
-		condition["created_at"] = latestTime
+	if latestTime != 0{
+		condition["created_at"]=latestTime
 	}
 	err := DB.WithContext(ctx).Where(condition).Find(&videos).Error
-	if err != nil {
+	if err!= nil{
 		return nil, err
 	}
-	return videos, nil
+	return videos,nil
 }
+
+
+

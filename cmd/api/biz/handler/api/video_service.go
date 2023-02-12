@@ -5,12 +5,13 @@ package api
 import (
 	"context"
 	httpVideo "douyin/cmd/api/biz/model/video"
-	"douyin/cmd/api/rpc"
+	"douyin/cmd/api/biz/rpc"
 	rpcVideo "douyin/kitex_gen/video"
 	"fmt"
+	"io/ioutil"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"io/ioutil"
 )
 
 // GetFeed .
@@ -37,8 +38,8 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/publish/action [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	var req httpVideo.PublishActionRequest
-	 c.BindAndValidate(&req)
-/*	if err != nil {
+	c.BindAndValidate(&req)
+	/*	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}*/
@@ -47,23 +48,23 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	title := c.FormValue("title")
 	data, err := c.FormFile("data")
 	fmt.Println(data.Size)
-	if err != nil{
+	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 	file, err := data.Open()
 	defer file.Close()
-	if err != nil{
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-	fileData,err := ioutil.ReadAll(file)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Printf("token:%v\ntitle:%v\ndataLen:%v\n",string(token),string(title),len(fileData))
-	if string(token) ==""{
+	fileData, err := ioutil.ReadAll(file)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	fmt.Printf("token:%v\ntitle:%v\ndataLen:%v\n", string(token), string(title), len(fileData))
+	if string(token) == "" {
 		c.Status(401)
 		return
 	}
@@ -72,7 +73,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	params.SetData(fileData)
 	//resp,err := rpc.PublishVideo(ctx,params)
 
-	resp,_ := rpc.PublishVideo(ctx,params)
+	resp, _ := rpc.PublishVideo(ctx, params)
 
 	c.JSON(consts.StatusOK, resp)
 }

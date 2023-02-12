@@ -11,7 +11,6 @@ type UserServiceImpl struct{}
 
 // CreateUser implements the UserServiceImpl interface.
 func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.CreateUserRequest) (resp *user.CreateUserResponse, err error) {
-	// TODO: Your code here...
 	return &user.CreateUserResponse{
 		BaseResp: &user.BaseResp{
 			StatusCode:    0,

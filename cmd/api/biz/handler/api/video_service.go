@@ -62,7 +62,6 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Printf("token:%v\ntitle:%v\ndataLen:%v\n",string(token),string(title),len(fileData))
 	if string(token) ==""{
 		c.Status(401)
 		return
@@ -70,10 +69,11 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	params.SetToken(string(token))
 	params.SetTitle(string(title))
 	params.SetData(fileData)
-	//resp,err := rpc.PublishVideo(ctx,params)
-
-	resp,_ := rpc.PublishVideo(ctx,params)
-
+	resp,err := rpc.PublishVideo(ctx,params)
+	if err!=nil{
+		c.String(consts.StatusBadRequest,err.Error())
+		return
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 

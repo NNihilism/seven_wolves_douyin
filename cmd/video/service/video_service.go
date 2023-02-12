@@ -1,7 +1,6 @@
 package service
 
 import (
-	"bufio"
 	"context"
 	"douyin/cmd/video/dao"
 	"douyin/kitex_gen/video"
@@ -9,8 +8,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"io/fs"
-	"os"
-	"path/filepath"
+	"io/ioutil"
 	"time"
 )
 
@@ -24,6 +22,7 @@ func NewVideoService(ctx context.Context)*VideoService{
 func (service *VideoService)GetFeed(req *video.FeedRequest)([]*dao.Video,error){
 	fmt.Println("api:GetFeed")
 	videosDbs, err := dao.GetFeed(service.ctx, req.GetLatestTime(), req.GetToken())
+	//TODO:拼接视频和图片URL
 	if err!=nil{
 		return nil,err
 	}
@@ -35,14 +34,12 @@ func (service *VideoService)PublishVideo(req *video.PublishActionRequest)(error)
 	// 随机生成一个文件名
 	fileName := uuid.New().String()
 	// 将视频流写到本地文件中，先不考虑用云服务存储 TODO:路径前缀
-	file, err := os.OpenFile(filepath.Base("./"+fileName), os.O_CREATE, fs.ModeAppend)
+	err := ioutil.WriteFile("./", req.GetData(), fs.ModeAppend)
+
 	if err != nil {
 		fmt.Println("create file error, fileName is: ", fileName)
 		return  err
 	}
-	defer file.Close()
-	writer := bufio.NewWriter(file)
-	_, err = writer.Write(req.Data)
 	if err != nil {
 		fmt.Println("write into server error, video's title is : ", req.Title)
 		return  err

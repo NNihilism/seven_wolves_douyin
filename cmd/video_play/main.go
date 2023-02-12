@@ -3,25 +3,45 @@ package main
 import (
 	"douyin/pkg/consts"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 import "log"
 import "net/http"
 
-type viewHandler struct{}
+const  (
+	videoUrl = "/douyin/video/"
+	imageUrl = "/douyin/image/"
+)
 
-func (vh *viewHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Path[1:]
-	fmt.Println(path)
-	data, err := ioutil.ReadFile("static/video"+path)
-	fmt.Println("请求进来了")
+type videoHandler struct{}
+type imageHandler struct{}
+func (vh *videoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//  日期/视频名字
+	path := r.URL.Path[len(videoUrl):]
+	fmt.Println("视频路径："+path)
+	data, err := os.ReadFile(consts.VideoStorePathPrefix + path)
 	if err != nil {
 		log.Printf("Error with path %s: %v", path, err)
 		w.WriteHeader(404)
 		w.Write([]byte("404"))
+		return
 	}
-	w.Header().Add("Accept-Ranges","bytes")
+	w.Header().Add("Accept-Ranges", "bytes")
 	w.Header().Add("Content-Type", "video/mp4")
+	w.Write(data)
+}
+func (vh *imageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//  日期/视频名字
+	path := r.URL.Path[len(imageUrl):]
+	fmt.Println("图片路径"+path)
+	data, err := os.ReadFile(consts.ImageStorePathPrefix + path)
+	if err != nil {
+		log.Printf("Error with path %s: %v", path, err)
+		w.WriteHeader(404)
+		w.Write([]byte("404"))
+		return
+	}
+	w.Header().Add("Content-Type", "image/jpeg")
 	w.Write(data)
 }
 /**
@@ -29,11 +49,11 @@ func (vh *viewHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
  * @Desc:播放视频
  */
 func main() {
-	http.Handle("/", new(viewHandler))
-	err := http.ListenAndServe(consts.VideoPlayServicePort, nil)
+	http.Handle(videoUrl, new(videoHandler))
+	http.Handle(imageUrl,new(imageHandler))
+	err := http.ListenAndServe(consts.VideoAndImageServicePort, nil)
 	if err != nil {
 		fmt.Println("视频流服务启动失败")
 		return
 	}
-
 }

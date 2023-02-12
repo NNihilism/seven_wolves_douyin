@@ -7,7 +7,6 @@ import (
 	httpVideo "douyin/cmd/api/biz/model/video"
 	"douyin/cmd/api/rpc"
 	rpcVideo "douyin/kitex_gen/video"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"io/ioutil"
@@ -36,17 +35,21 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 // PublishVideo .
 // @router /douyin/publish/action [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
-	var req httpVideo.PublishActionRequest
-	 c.BindAndValidate(&req)
+	//var req httpVideo.PublishActionRequest
+	// c.BindAndValidate(&req)
 /*	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}*/
 	params := &rpcVideo.PublishActionRequest{}
 	token := c.FormValue("token")
+	if string(token) ==""{
+		c.Status(401)
+		return
+	}
 	title := c.FormValue("title")
 	data, err := c.FormFile("data")
-	fmt.Println(data.Size)
+
 	if err != nil{
 		c.String(consts.StatusBadRequest, err.Error())
 		return
@@ -60,10 +63,6 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	fileData,err := ioutil.ReadAll(file)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-	if string(token) ==""{
-		c.Status(401)
 		return
 	}
 	params.SetToken(string(token))

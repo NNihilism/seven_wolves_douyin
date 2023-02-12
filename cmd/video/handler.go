@@ -27,17 +27,13 @@ func (s *VideoServiceImpl) GetFeed(ctx context.Context, req *video.FeedRequest) 
 func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishActionRequest) (resp *video.PublishActionResponse, err error) {
 	// TODO: Your code here...
 	resp = new(video.PublishActionResponse)
-	msg := "ok"
-	resp.SetStatusCode(0)
-	resp.SetStatusMsg(&msg)
 	err = service.NewVideoService(ctx).PublishVideo(req)
-	if err != nil{
-		msg = "publish error"
-		resp.SetStatusCode(-1)
-		log.Println("发布失败")
-		return resp,err
+	if err != nil {
+		log.Fatal("发布失败")
+		return &video.PublishActionResponse{StatusCode: -1}, err
 	}
-	return resp,nil
+	resp.SetStatusCode(0)
+	return resp, nil
 }
 
 // GetPublishVideoList implements the VideoServiceImpl interface.

@@ -16,7 +16,7 @@ func InitVideoClient() {
 	c, err := videoservice.NewClient(
 		consts.VideoServerName,
 		client.WithHostPorts(consts.VideoServerHost+consts.VideoServerPort),
-		)
+	)
 
 	if err != nil {
 		log.Fatal(err)
@@ -24,7 +24,7 @@ func InitVideoClient() {
 	videoClient = c
 }
 func GetFeed(ctx context.Context, req *video.FeedRequest) (resp *video.FeedResponse, err error) {
-	resp,err = videoClient.GetFeed(ctx,req)
+	resp, err = videoClient.GetFeed(ctx, req)
 	if err != nil {
 		log.Fatal(err)
 		return &video.FeedResponse{StatusCode: -1}, err

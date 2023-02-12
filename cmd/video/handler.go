@@ -20,7 +20,7 @@ func (s *VideoServiceImpl) GetFeed(ctx context.Context, req *video.FeedRequest) 
 	resp.SetStatusCode(0)
 	nextTime := videoList[len(videoList)-1].CreatedAt.Unix()
 	resp.SetNextTime(&nextTime)
-	return resp,nil
+	return resp, nil
 }
 
 // PublishVideo implements the VideoServiceImpl interface.
@@ -31,13 +31,13 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.PublishA
 	resp.SetStatusCode(0)
 	resp.SetStatusMsg(&msg)
 	err = service.NewVideoService(ctx).PublishVideo(req)
-	if err != nil{
+	if err != nil {
 		msg = "publish error"
 		resp.SetStatusCode(-1)
 		log.Println("发布失败")
-		return resp,err
+		return resp, err
 	}
-	return resp,nil
+	return resp, nil
 }
 
 // GetPublishVideoList implements the VideoServiceImpl interface.

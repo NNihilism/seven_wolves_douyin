@@ -32,7 +32,10 @@ func GetFeed(ctx context.Context, latestTime int64) ([]*Video, error) {
 }
 func CreateVideo(ctx context.Context, v *Video) error {
 	err := DB.WithContext(ctx).Create(v).Error
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func GetVideoListByUserId(ctx context.Context, userId int64) ([]*Video, error) {
 	videoList := make([]*Video, 0)

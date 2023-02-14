@@ -70,7 +70,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	params.SetData(fileData)
 	resp, err := rpc.PublishVideo(ctx, params)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, resp)
 		return
 	}
 	c.JSON(consts.StatusOK, resp)
@@ -88,7 +88,7 @@ func GetPublishVideoList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp, err := rpc.GetPublishVideoList(ctx, &rpcVideo.PublishListRequest{UserId: req.UserID, Token: req.Token})
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, resp)
 		return
 	}
 	c.JSON(consts.StatusOK, resp)

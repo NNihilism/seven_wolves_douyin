@@ -3,13 +3,9 @@
 package main
 
 import (
-	"douyin/cmd/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
-func init() {
-	rpc.InitVideoClient()
-}
 func main() {
 	h := server.Default()
 

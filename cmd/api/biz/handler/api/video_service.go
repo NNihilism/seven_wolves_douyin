@@ -19,7 +19,7 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 	var req httpVideo.FeedRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	params := &rpcVideo.FeedRequest{}
@@ -51,18 +51,18 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	data, err := c.FormFile("data")
 
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	file, err := data.Open()
 	defer file.Close()
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	fileData, err := ioutil.ReadAll(file)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	params.SetToken(string(token))
@@ -70,7 +70,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	params.SetData(fileData)
 	resp, err := rpc.PublishVideo(ctx, params)
 	if err != nil {
-		c.JSON(consts.StatusInternalServerError, resp)
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	c.JSON(consts.StatusOK, resp)
@@ -83,12 +83,12 @@ func GetPublishVideoList(ctx context.Context, c *app.RequestContext) {
 	var req httpVideo.PublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	resp, err := rpc.GetPublishVideoList(ctx, &rpcVideo.PublishListRequest{UserId: req.UserID, Token: req.Token})
 	if err != nil {
-		c.JSON(consts.StatusInternalServerError, resp)
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	c.JSON(consts.StatusOK, resp)

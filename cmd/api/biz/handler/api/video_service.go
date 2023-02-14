@@ -37,30 +37,30 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	//var req httpVideo.PublishActionRequest
 	// c.BindAndValidate(&req)
-/*	if err != nil {
+	/*	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}*/
 	params := &rpcVideo.PublishActionRequest{}
 	token := c.FormValue("token")
-	if string(token) ==""{
+	if string(token) == "" {
 		c.Status(401)
 		return
 	}
 	title := c.FormValue("title")
 	data, err := c.FormFile("data")
 
-	if err != nil{
+	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 	file, err := data.Open()
 	defer file.Close()
-	if err != nil{
+	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	fileData,err := ioutil.ReadAll(file)
+	fileData, err := ioutil.ReadAll(file)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
@@ -68,9 +68,9 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	params.SetToken(string(token))
 	params.SetTitle(string(title))
 	params.SetData(fileData)
-	resp,err := rpc.PublishVideo(ctx,params)
-	if err!=nil{
-		c.String(consts.StatusBadRequest,err.Error())
+	resp, err := rpc.PublishVideo(ctx, params)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 	c.JSON(consts.StatusOK, resp)
@@ -86,8 +86,10 @@ func GetPublishVideoList(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-
-	resp := new(httpVideo.PublishListResponse)
-
+	resp, err := rpc.GetPublishVideoList(ctx, &rpcVideo.PublishListRequest{UserId: req.UserID, Token: req.Token})
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
 	c.JSON(consts.StatusOK, resp)
 }

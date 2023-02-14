@@ -10,18 +10,18 @@ import (
 	"log"
 	"net"
 )
-func init(){
+
+func init() {
 	dao.Init()
 }
 func main() {
-	addr,_ := net.ResolveTCPAddr("tcp",consts.BaseIP+consts.VideoServerPort)
+	addr, _ := net.ResolveTCPAddr("tcp", consts.BaseIP+consts.VideoServerPort)
 	svr := video.NewServer(new(VideoServiceImpl),
 		server.WithServiceAddr(addr),
 		server.WithMiddleware(mw.CommonMiddleware),
 		server.WithMiddleware(mw.ServerMiddleware),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: consts.VideoServerName}),
 	)
-
 
 	err := svr.Run()
 

@@ -34,3 +34,11 @@ func CreateVideo(ctx context.Context, v *Video) error {
 	err := DB.WithContext(ctx).Create(v).Error
 	return err
 }
+func GetVideoListByUserId(ctx context.Context, userId int64) ([]*Video, error) {
+	videoList := make([]*Video, 0)
+	err := DB.WithContext(ctx).Where("author_id = ?", userId).Find(&videoList).Error
+	if err != nil {
+		return nil, err
+	}
+	return videoList, nil
+}

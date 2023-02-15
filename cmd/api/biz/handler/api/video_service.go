@@ -5,11 +5,12 @@ package api
 import (
 	"context"
 	httpVideo "douyin/cmd/api/biz/model/video"
-	"douyin/cmd/api/rpc"
+	"douyin/cmd/api/biz/rpc"
 	rpcVideo "douyin/kitex_gen/video"
+	"io/ioutil"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"io/ioutil"
 )
 
 // GetFeed .

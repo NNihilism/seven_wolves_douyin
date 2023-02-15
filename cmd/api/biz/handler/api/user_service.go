@@ -6,7 +6,7 @@ import (
 	"context"
 
 	api "douyin/cmd/api/biz/model/api"
-	"douyin/cmd/api/rpc"
+	"douyin/cmd/api/biz/rpc"
 	"douyin/kitex_gen/user"
 
 	"github.com/cloudwego/hertz/pkg/app"

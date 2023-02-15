@@ -7,7 +7,6 @@ import (
 	httpVideo "douyin/cmd/api/biz/model/video"
 	"douyin/cmd/api/biz/rpc"
 	rpcVideo "douyin/kitex_gen/video"
-	"fmt"
 	"io/ioutil"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -21,7 +20,7 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 	var req httpVideo.FeedRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	params := &rpcVideo.FeedRequest{}
@@ -37,44 +36,44 @@ func GetFeed(ctx context.Context, c *app.RequestContext) {
 // PublishVideo .
 // @router /douyin/publish/action [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
-	var req httpVideo.PublishActionRequest
-	c.BindAndValidate(&req)
+	//var req httpVideo.PublishActionRequest
+	// c.BindAndValidate(&req)
 	/*	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}*/
 	params := &rpcVideo.PublishActionRequest{}
 	token := c.FormValue("token")
+	if string(token) == "" {
+		c.Status(401)
+		return
+	}
 	title := c.FormValue("title")
 	data, err := c.FormFile("data")
-	fmt.Println(data.Size)
+
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	file, err := data.Open()
 	defer file.Close()
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	fileData, err := ioutil.ReadAll(file)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-	fmt.Printf("token:%v\ntitle:%v\ndataLen:%v\n", string(token), string(title), len(fileData))
-	if string(token) == "" {
-		c.Status(401)
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
 	params.SetToken(string(token))
 	params.SetTitle(string(title))
 	params.SetData(fileData)
-	//resp,err := rpc.PublishVideo(ctx,params)
-
-	resp, _ := rpc.PublishVideo(ctx, params)
-
+	resp, err := rpc.PublishVideo(ctx, params)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, nil)
+		return
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
@@ -85,11 +84,13 @@ func GetPublishVideoList(ctx context.Context, c *app.RequestContext) {
 	var req httpVideo.PublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusInternalServerError, nil)
 		return
 	}
-
-	resp := new(httpVideo.PublishListResponse)
-
+	resp, err := rpc.GetPublishVideoList(ctx, &rpcVideo.PublishListRequest{UserId: req.UserID, Token: req.Token})
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, nil)
+		return
+	}
 	c.JSON(consts.StatusOK, resp)
 }

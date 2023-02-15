@@ -11,7 +11,8 @@ import (
 )
 
 var DB *gorm.DB
-func Init(){
+
+func Init() {
 	var err error
 	gormlogrus := logger.New(
 		logrus.NewWriter(),
@@ -21,15 +22,20 @@ func Init(){
 			LogLevel:      logger.Info,
 		},
 	)
-	DB,err = gorm.Open(mysql.Open(consts.VideoMySQLDefaultDSN),
+	//DB,err = gorm.Open(mysql.Open(consts.VideoMySQLDefaultDSN),
+	//	&gorm.Config{
+	//		PrepareStmt: true,
+	//		Logger:      gormlogrus,
+	//	},
+	//)
+	DB, err = gorm.Open(mysql.Open(consts.VideoDefaultDSN),
 		&gorm.Config{
 			PrepareStmt: true,
-			Logger: gormlogrus,
+			Logger:      gormlogrus,
 		},
 	)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("数据库连接成功%v",DB)
+	fmt.Printf("数据库连接成功%v", DB)
 }
-

@@ -7,14 +7,15 @@ import (
 	"douyin/kitex_gen/video"
 	"douyin/pkg/consts"
 	"fmt"
-	"github.com/disintegration/imaging"
-	"github.com/google/uuid"
-	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"io/fs"
 	"log"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/disintegration/imaging"
+	"github.com/google/uuid"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
 type VideoService struct {

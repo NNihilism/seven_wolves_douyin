@@ -1154,7 +1154,8 @@ func (p *CreateUserResponse) Field2DeepEqual(src *User) bool {
 }
 
 type MGetUserRequest struct {
-	UserIds []int64 `thrift:"user_ids,1" frugal:"1,default,list<i64>" json:"user_ids"`
+	UserIds   []int64  `thrift:"user_ids,1" frugal:"1,default,list<i64>" json:"user_ids"`
+	Usernames []string `thrift:"usernames,2" frugal:"2,default,list<string>" json:"usernames"`
 }
 
 func NewMGetUserRequest() *MGetUserRequest {
@@ -1168,12 +1169,20 @@ func (p *MGetUserRequest) InitDefault() {
 func (p *MGetUserRequest) GetUserIds() (v []int64) {
 	return p.UserIds
 }
+
+func (p *MGetUserRequest) GetUsernames() (v []string) {
+	return p.Usernames
+}
 func (p *MGetUserRequest) SetUserIds(val []int64) {
 	p.UserIds = val
+}
+func (p *MGetUserRequest) SetUsernames(val []string) {
+	p.Usernames = val
 }
 
 var fieldIDToName_MGetUserRequest = map[int16]string{
 	1: "user_ids",
+	2: "usernames",
 }
 
 func (p *MGetUserRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1198,6 +1207,16 @@ func (p *MGetUserRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 1:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1257,6 +1276,28 @@ func (p *MGetUserRequest) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *MGetUserRequest) ReadField2(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.Usernames = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.Usernames = append(p.Usernames, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *MGetUserRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("MGetUserRequest"); err != nil {
@@ -1265,6 +1306,10 @@ func (p *MGetUserRequest) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
 			goto WriteFieldError
 		}
 
@@ -1311,6 +1356,31 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
+func (p *MGetUserRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("usernames", thrift.LIST, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.STRING, len(p.Usernames)); err != nil {
+		return err
+	}
+	for _, v := range p.Usernames {
+		if err := oprot.WriteString(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
 func (p *MGetUserRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1327,6 +1397,9 @@ func (p *MGetUserRequest) DeepEqual(ano *MGetUserRequest) bool {
 	if !p.Field1DeepEqual(ano.UserIds) {
 		return false
 	}
+	if !p.Field2DeepEqual(ano.Usernames) {
+		return false
+	}
 	return true
 }
 
@@ -1338,6 +1411,19 @@ func (p *MGetUserRequest) Field1DeepEqual(src []int64) bool {
 	for i, v := range p.UserIds {
 		_src := src[i]
 		if v != _src {
+			return false
+		}
+	}
+	return true
+}
+func (p *MGetUserRequest) Field2DeepEqual(src []string) bool {
+
+	if len(p.Usernames) != len(src) {
+		return false
+	}
+	for i, v := range p.Usernames {
+		_src := src[i]
+		if strings.Compare(v, _src) != 0 {
 			return false
 		}
 	}

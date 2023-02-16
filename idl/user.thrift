@@ -40,7 +40,8 @@ struct CreateUserResponse {
 }
 
 struct MGetUserRequest {
-    1: list<i64> user_ids (vt.min_size = "1")
+    1: list<i64> user_ids 
+    2: list<string> usernames 
 }
 
 struct MGetUserResponse {

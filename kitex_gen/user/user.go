@@ -355,7 +355,6 @@ type User struct {
 	Username      string `thrift:"username,2" frugal:"2,default,string" json:"username"`
 	FollowCount   int64  `thrift:"follow_count,3" frugal:"3,default,i64" json:"follow_count"`
 	FollowerCount int64  `thrift:"follower_count,4" frugal:"4,default,i64" json:"follower_count"`
-	Password      string `thrift:"password,5" frugal:"5,default,string" json:"password"`
 }
 
 func NewUser() *User {
@@ -381,10 +380,6 @@ func (p *User) GetFollowCount() (v int64) {
 func (p *User) GetFollowerCount() (v int64) {
 	return p.FollowerCount
 }
-
-func (p *User) GetPassword() (v string) {
-	return p.Password
-}
 func (p *User) SetId(val int64) {
 	p.Id = val
 }
@@ -397,16 +392,12 @@ func (p *User) SetFollowCount(val int64) {
 func (p *User) SetFollowerCount(val int64) {
 	p.FollowerCount = val
 }
-func (p *User) SetPassword(val string) {
-	p.Password = val
-}
 
 var fieldIDToName_User = map[int16]string{
 	1: "id",
 	2: "username",
 	3: "follow_count",
 	4: "follower_count",
-	5: "password",
 }
 
 func (p *User) Read(iprot thrift.TProtocol) (err error) {
@@ -461,16 +452,6 @@ func (p *User) Read(iprot thrift.TProtocol) (err error) {
 		case 4:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField4(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 5:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -544,15 +525,6 @@ func (p *User) ReadField4(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *User) ReadField5(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		p.Password = v
-	}
-	return nil
-}
-
 func (p *User) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("User"); err != nil {
@@ -573,10 +545,6 @@ func (p *User) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField4(oprot); err != nil {
 			fieldId = 4
-			goto WriteFieldError
-		}
-		if err = p.writeField5(oprot); err != nil {
-			fieldId = 5
 			goto WriteFieldError
 		}
 
@@ -666,23 +634,6 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
-func (p *User) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("password", thrift.STRING, 5); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Password); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
-}
-
 func (p *User) String() string {
 	if p == nil {
 		return "<nil>"
@@ -706,9 +657,6 @@ func (p *User) DeepEqual(ano *User) bool {
 		return false
 	}
 	if !p.Field4DeepEqual(ano.FollowerCount) {
-		return false
-	}
-	if !p.Field5DeepEqual(ano.Password) {
 		return false
 	}
 	return true
@@ -738,13 +686,6 @@ func (p *User) Field3DeepEqual(src int64) bool {
 func (p *User) Field4DeepEqual(src int64) bool {
 
 	if p.FollowerCount != src {
-		return false
-	}
-	return true
-}
-func (p *User) Field5DeepEqual(src string) bool {
-
-	if strings.Compare(p.Password, src) != 0 {
 		return false
 	}
 	return true

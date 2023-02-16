@@ -26,7 +26,7 @@ struct User {
     2: string username
     3: i64 follow_count
     4: i64 follower_count
-    5: string password
+    # 5: string password
 }
 
 struct CreateUserRequest {

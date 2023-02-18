@@ -33,4 +33,8 @@ const (
 	VideoMySQLDefaultDSN = "root:A1548223199@tcp(localhost:3306)/douyin?charset=utf8&parseTime=True&loc=Local"
 	VideoPlayServicePort = ":8089"
 	VideoServerName="video_module"
+
+	// follow module
+	FollowsMySQLDefaultDSN = "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+
 )

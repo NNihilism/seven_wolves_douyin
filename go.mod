@@ -13,7 +13,7 @@ require (
 	github.com/hertz-contrib/jwt v1.0.2
 	github.com/kitex-contrib/obs-opentelemetry v0.1.0
 	github.com/kitex-contrib/registry-etcd v0.1.0
-	gorm.io/driver/mysql v1.4.6
+	gorm.io/driver/mysql v1.4.7
 	gorm.io/gorm v1.24.5
 	gorm.io/plugin/opentelemetry v0.1.0
 )

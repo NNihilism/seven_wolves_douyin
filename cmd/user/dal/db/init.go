@@ -1,17 +1,19 @@
-package dao
+package db
 
 import (
 	"douyin/pkg/consts"
-	"fmt"
+	"time"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/plugin/opentelemetry/logging/logrus"
-	"time"
+	"gorm.io/plugin/opentelemetry/tracing"
 )
 
 var DB *gorm.DB
 
+// Init init DB
 func Init() {
 	var err error
 	gormlogrus := logger.New(
@@ -22,13 +24,7 @@ func Init() {
 			LogLevel:      logger.Info,
 		},
 	)
-	//DB,err = gorm.Open(mysql.Open(consts.VideoMySQLDefaultDSN),
-	//	&gorm.Config{
-	//		PrepareStmt: true,
-	//		Logger:      gormlogrus,
-	//	},
-	//)
-	DB, err = gorm.Open(mysql.Open(consts.VideoDefaultDSN),
+	DB, err = gorm.Open(mysql.Open(consts.UserDefaultDSN),
 		&gorm.Config{
 			PrepareStmt: true,
 			Logger:      gormlogrus,
@@ -37,5 +33,8 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("数据库连接成功%v", DB)
+	if err := DB.Use(tracing.NewPlugin()); err != nil {
+		panic(err)
+	}
+	DB.AutoMigrate(&User{})
 }

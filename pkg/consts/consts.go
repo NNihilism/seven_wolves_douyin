@@ -1,6 +1,8 @@
 package consts
 
 const (
+	TCP = "tcp"
+
 	// server name
 	UserServiceName = "user"
 	ApiServiceName  = "api"
@@ -12,9 +14,9 @@ const (
 	ETCDAddress = "127.0.0.1:2379"
 
 	// user module
-	UserDefaultDSN = "root:root@tcp(localhost:3300)/douyin?charset=utf8&parseTime=True&loc=Local"
-	UserTableName  = "user"
-
+	UserDefaultDSN  = "root:root@tcp(localhost:3300)/douyin?charset=utf8&parseTime=True&loc=Local"
+	UserTableName   = "user"
+	UserServiceAddr = ":9000"
 	// video module
 	VideoServerHost = "127.0.0.1"
 	VideoServerPort = ":8083"

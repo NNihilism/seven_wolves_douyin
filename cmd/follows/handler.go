@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	follows "douyin/idl/kitex_gen/follows"
+	follows "douyin/kitex_gen/follows"
 )
 
 // FollowServiceImpl implements the last service interface defined in the IDL.

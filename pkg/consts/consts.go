@@ -12,7 +12,7 @@ const (
 	ETCDAddress = "127.0.0.1:2379"
 
 	// user module
-	UserDefaultDSN = "root:root@tcp(localhost:3300)/user?charset=utf8&parseTime=True&loc=Local"
+	UserDefaultDSN = "root:root@tcp(localhost:3300)/douyin?charset=utf8&parseTime=True&loc=Local"
 	UserTableName  = "user"
 
 	// video module

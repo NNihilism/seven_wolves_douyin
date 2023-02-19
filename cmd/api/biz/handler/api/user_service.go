@@ -4,6 +4,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	api "douyin/cmd/api/biz/model/api"
 	"douyin/cmd/api/biz/rpc"
@@ -40,6 +41,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	fmt.Println("req:", req)
 	// userClient.CreateUser()
 	rpcResp, err := rpc.CreateUser(ctx, &user.CreateUserRequest{
 		Username: req.Name,

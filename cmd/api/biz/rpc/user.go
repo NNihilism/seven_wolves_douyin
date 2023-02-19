@@ -5,38 +5,45 @@ import (
 	"douyin/kitex_gen/user"
 	"douyin/kitex_gen/user/userservice"
 	"douyin/pkg/consts"
+	"fmt"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	"gorm.io/plugin/opentelemetry/provider"
 )
 
 var userClient userservice.Client
 
 func initUser() {
-	r, err := etcd.NewEtcdResolver([]string{consts.ETCDAddress})
+	r, err := etcd.NewEtcdResolver([]string{consts.ETCDAddress}) // For service discovery
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println("r : ", r)
 	// 链路追踪相关
-	provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(consts.ApiServiceName),
-		provider.WithExportEndpoint(consts.ExportEndpoint),
-		provider.WithInsecure(),
-	)
+	// provider.NewOpenTelemetryProvider(
+	// 	provider.WithServiceName(consts.ApiServiceName),
+	// 	provider.WithExportEndpoint(consts.ExportEndpoint),
+	// 	provider.WithInsecure(),
+	// )
+	// fmt.Println(r.etcdClient.Kvs)
+
+	// c, err := userservice.NewClient(
+	// 	consts.UserServiceName,
+	// 	client.WithHostPorts(consts.UserServiceAddr),
+	// )
 
 	c, err := userservice.NewClient(
 		consts.UserServiceName,
-		client.WithResolver(r),
+		client.WithResolver(r), // client.WithHostPorts(consts.UserServiceAddr) We can also specify the server address
 		client.WithMuxConnection(1),
 		// client.WithMiddleware(mw.CommonMiddleware),
 		// client.WithInstanceMW(mw.ClientMiddleware),
-		client.WithSuite(tracing.NewClientSuite()),
+		// client.WithSuite(tracing.NewClientSuite()),
 		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: consts.ApiServiceName}),
 	)
+
 	if err != nil {
 		panic(err)
 	}
@@ -45,11 +52,11 @@ func initUser() {
 
 // CreateUser create user info
 func CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
-	// resp, err := userClient.CreateUser(ctx, req)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	return userClient.CreateUser(ctx, req)
+	resp, err := userClient.CreateUser(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
 }
 
 // func CreateUser(ctx context.Context, req *user.CreateUserRequest) error {

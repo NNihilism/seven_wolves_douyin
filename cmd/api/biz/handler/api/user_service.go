@@ -24,7 +24,21 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(api.UserResp)
+	rpcResp, err := rpc.CheckUser(context.Background(), &user.CheckUserRequest{
+		Username: req.Name,
+		Password: req.Pwd,
+	})
+
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, nil)
+	}
+
+	resp := &api.UserResp{
+		StatusCode: rpcResp.BaseResp.StatusCode,
+		StatusMsg:  rpcResp.BaseResp.StatusMessage,
+		UserID:     rpcResp.UserId,
+		Token:      "", // token is ignored temporarily
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -40,7 +54,6 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	// userClient.CreateUser()
 	rpcResp, err := rpc.CreateUser(ctx, &user.CreateUserRequest{
 		Username: req.Name,
 		Password: req.Pwd,

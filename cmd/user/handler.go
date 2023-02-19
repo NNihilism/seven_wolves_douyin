@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"douyin/cmd/user/pack"
+	"douyin/cmd/user/service"
 	user "douyin/kitex_gen/user"
-	"time"
+	"douyin/pkg/errno"
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
@@ -11,20 +13,23 @@ type UserServiceImpl struct{}
 
 // CreateUser implements the UserServiceImpl interface.
 func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.CreateUserRequest) (resp *user.CreateUserResponse, err error) {
-	return &user.CreateUserResponse{
-		BaseResp: &user.BaseResp{
-			StatusCode:    0,
-			StatusMessage: "Yeah, created successfully",
-			ServiceTime:   time.Now().Unix(),
-		},
-		User: &user.User{
-			Id:            8888,
-			Username:      "Jack",
-			Password:      "123456",
-			FollowCount:   80,
-			FollowerCount: 100,
-		},
-	}, nil
+	resp = new(user.CreateUserResponse)
+
+	err = service.NewCreateUserService(ctx).CreateUser(req)
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+
+	// ID username傻傻分不清楚
+	resp.User, err = service.NewMGetUserService(ctx).QueryUserByName(&user.CheckUserRequest{Username: req.Username})
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+
+	resp.BaseResp = pack.BuildBaseResp(errno.Success)
+	return resp, nil
 }
 
 // MGetUser implements the UserServiceImpl interface.

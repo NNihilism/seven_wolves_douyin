@@ -6,7 +6,6 @@ import (
 	"douyin/cmd/user/service"
 	user "douyin/kitex_gen/user"
 	"douyin/pkg/errno"
-	"fmt"
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
@@ -16,13 +15,11 @@ type UserServiceImpl struct{}
 func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.CreateUserRequest) (resp *user.CreateUserResponse, err error) {
 	resp = new(user.CreateUserResponse)
 
-	fmt.Println("receive the req....")
 	err = service.NewCreateUserService(ctx).CreateUser(req)
 	if err != nil {
 		resp.BaseResp = pack.BuildBaseResp(err)
 		return resp, nil
 	}
-	fmt.Println("receive the req2....")
 
 	// ID username傻傻分不清楚
 	resp.User, err = service.NewMGetUserService(ctx).QueryUserByName(&user.CheckUserRequest{Username: req.Username})
@@ -43,6 +40,16 @@ func (s *UserServiceImpl) MGetUser(ctx context.Context, req *user.MGetUserReques
 
 // CheckUser implements the UserServiceImpl interface.
 func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.CheckUserRequest) (resp *user.CheckUserResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(user.CheckUserResponse)
+
+	uid, err := service.NewCheckUserService(ctx).CheckUser(req)
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+
+	resp.UserId = int64(uid)
+	resp.BaseResp = pack.BuildBaseResp(errno.Success)
+
+	return resp, nil
 }

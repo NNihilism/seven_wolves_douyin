@@ -22,6 +22,14 @@ services:
       - "2379:2379"
       - "2380:2380"
 
+  # Redis
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    # environment:
+
+    # image:redis
   # Jaeger
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest

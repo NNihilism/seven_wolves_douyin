@@ -1,8 +1,11 @@
 package consts
 
 const (
-	TCP = "tcp"
+	TCP         = "tcp"
+	SecretKey   = "secret key"
+	IdentityKey = "id"
 
+	RedisAddr = ":6379"
 	// server name
 	UserServiceName = "user"
 	ApiServiceName  = "api"

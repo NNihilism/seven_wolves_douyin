@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cloudwego/biz-demo/easy_note/cmd/api/biz/model/demoapi"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
@@ -29,7 +28,7 @@ func InitJWT() {
 		IdentityKey:   consts.IdentityKey,
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 			claims := jwt.ExtractClaims(ctx, c)
-			return &demoapi.User{
+			return &api.UserResp{
 				UserID: int64(claims[consts.IdentityKey].(float64)),
 			}
 		},
@@ -57,29 +56,32 @@ func InitJWT() {
 				Username: req.Name,
 				Password: req.Pwd,
 			})
-			// resp.BaseResp()
+
+			c.Set(consts.IdentityKey, resp.UserId)
 			return resp.UserId, err
-			// return rpc.CheckUser(context.Background(), &user.CheckUserRequest{
-			// 	Username: req.Name,
-			// 	Password: req.Pwd,
-			// })
+
 		},
 		// login success...
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
-			resp := &api.UserResp{
-				StatusCode: int64(code),
-				StatusMsg:  "success",
-				UserID:     100086, // how to get the userid....
-				Token:      token,
+			var resp *api.UserResp
+			id, exist := c.Get(consts.IdentityKey)
+			if !exist {
+				resp = &api.UserResp{
+					StatusCode: int64(code),
+					StatusMsg:  "id not exist.",
+					UserID:     -1,
+					Token:      token,
+				}
+			} else {
+				resp = &api.UserResp{
+					StatusCode: int64(code),
+					StatusMsg:  "success",
+					UserID:     id.(int64),
+					Token:      token,
+				}
 			}
 
 			c.JSON(http.StatusOK, resp)
-
-			// c.JSON(http.StatusOK, utils.H{
-			// 	"code":   errno.Success.ErrCode,
-			// 	"token":  token,
-			// 	"expire": expire.Format(time.RFC3339),
-			// })
 		},
 		// Jwt verification failed...
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {

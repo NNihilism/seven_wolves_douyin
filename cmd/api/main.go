@@ -18,6 +18,7 @@ func init() {
 	rpc.Init()
 
 	mw.InitJWT()
+
 	dal.Init()
 }
 func main() {

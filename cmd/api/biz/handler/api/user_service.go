@@ -4,6 +4,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	api "douyin/cmd/api/biz/model/api"
 	"douyin/cmd/api/biz/mw"
@@ -17,7 +18,9 @@ import (
 // Login .
 // @router /login [GET]
 func Login(ctx context.Context, c *app.RequestContext) {
+	fmt.Println("here.....")
 	mw.JwtMiddleware.LoginHandler(ctx, c)
+	fmt.Println("here2.....")
 
 	// var err error
 	// var req api.UserReq
@@ -50,6 +53,8 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // @router /register [GET]
 func Register(ctx context.Context, c *app.RequestContext) {
 	// mw.JwtMiddleware.LoginHandler(ctx, c)
+	fmt.Println("here.....")
+
 	var err error
 	var req api.UserReq
 	err = c.BindAndValidate(&req)
@@ -67,8 +72,11 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		c.JSON(consts.StatusInternalServerError, nil)
 	}
+	fmt.Println("here2.....")
 
 	mw.JwtMiddleware.LoginHandler(ctx, c)
+	fmt.Println("here3.....")
+
 	// resp := &api.UserResp{
 	// 	StatusCode: rpcResp.BaseResp.StatusCode,
 	// 	StatusMsg:  rpcResp.BaseResp.StatusMessage,

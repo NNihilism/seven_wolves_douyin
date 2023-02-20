@@ -2,16 +2,18 @@ package mw
 
 import (
 	"context"
+	"douyin/cmd/api/biz/model/api"
+	"douyin/cmd/api/biz/rpc"
+	"douyin/kitex_gen/user"
+	"douyin/pkg/consts"
+	"douyin/pkg/errno"
+	"net/http"
+	"time"
+
 	"github.com/cloudwego/biz-demo/easy_note/cmd/api/biz/model/demoapi"
-	"github.com/cloudwego/biz-demo/easy_note/cmd/api/biz/rpc"
-	"github.com/cloudwego/biz-demo/easy_note/kitex_gen/demouser"
-	"github.com/cloudwego/biz-demo/easy_note/pkg/consts"
-	"github.com/cloudwego/biz-demo/easy_note/pkg/errno"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
-	"net/http"
-	"time"
 )
 
 var JwtMiddleware *jwt.HertzJWTMiddleware
@@ -31,6 +33,8 @@ func InitJWT() {
 				UserID: int64(claims[consts.IdentityKey].(float64)),
 			}
 		},
+		// Its input parameter is the return value of 'Authenticator'
+		// resolve input parameter
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(int64); ok {
 				return jwt.MapClaims{
@@ -39,33 +43,52 @@ func InitJWT() {
 			}
 			return jwt.MapClaims{}
 		},
+		// Set user information at login
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
 			var err error
-			var req demoapi.CheckUserRequest
+			var req api.UserReq
 			if err = c.BindAndValidate(&req); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
-			if len(req.Username) == 0 || len(req.Password) == 0 {
+			if len(req.Name) == 0 || len(req.Pwd) == 0 {
 				return "", jwt.ErrMissingLoginValues
 			}
-			return rpc.CheckUser(context.Background(), &demouser.CheckUserRequest{
-				Username: req.Username,
-				Password: req.Password,
+			resp, err := rpc.CheckUser(context.Background(), &user.CheckUserRequest{
+				Username: req.Name,
+				Password: req.Pwd,
 			})
+			// resp.BaseResp()
+			return resp.UserId, err
+			// return rpc.CheckUser(context.Background(), &user.CheckUserRequest{
+			// 	Username: req.Name,
+			// 	Password: req.Pwd,
+			// })
 		},
+		// login success...
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
-			c.JSON(http.StatusOK, utils.H{
-				"code":   errno.Success.ErrCode,
-				"token":  token,
-				"expire": expire.Format(time.RFC3339),
-			})
+			resp := &api.UserResp{
+				StatusCode: int64(code),
+				StatusMsg:  "success",
+				UserID:     100086, // how to get the userid....
+				Token:      token,
+			}
+
+			c.JSON(http.StatusOK, resp)
+
+			// c.JSON(http.StatusOK, utils.H{
+			// 	"code":   errno.Success.ErrCode,
+			// 	"token":  token,
+			// 	"expire": expire.Format(time.RFC3339),
+			// })
 		},
+		// Jwt verification failed...
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
 			c.JSON(http.StatusUnauthorized, utils.H{
 				"code":    errno.AuthorizationFailedErr.ErrCode,
 				"message": message,
 			})
 		},
+		// Used to set the error information contained in the response when an error occurs in the jwt verification process
 		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
 			switch t := e.(type) {
 			case errno.ErrNo:

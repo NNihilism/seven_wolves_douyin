@@ -1,7 +1,9 @@
 package consts
 
 const (
-	TCP = "tcp"
+	TCP         = "tcp"
+	SecretKey   = "secret key"
+	IdentityKey = "id"
 
 	// server name
 	UserServiceName = "user"

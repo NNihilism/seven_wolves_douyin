@@ -28,7 +28,7 @@ func Init() {
 	//		Logger:      gormlogrus,
 	//	},
 	//)
-	DB, err = gorm.Open(mysql.Open(consts.VideoDefaultDSN),
+	DB, err = gorm.Open(mysql.Open(consts.VideoMySQLDefaultDSN),
 		&gorm.Config{
 			PrepareStmt: true,
 			Logger:      gormlogrus,

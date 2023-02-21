@@ -3,11 +3,11 @@ package dal
 
 import (
 	"douyin/pkg/consts"
-	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/plugin/opentelemetry/logging/logrus"
+	"gorm.io/plugin/opentelemetry/tracing"
 	"time"
 )
 
@@ -32,5 +32,8 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("数据库连接成功%v", DB)
+	if err := DB.Use(tracing.NewPlugin()); err != nil {
+		panic(err)
+	}
+	DB.AutoMigrate(&Follow{})
 }

@@ -4,7 +4,7 @@ package followservice
 
 import (
 	"context"
-	follows "douyin/idl/kitex_gen/follows"
+	follows "douyin/kitex_gen/follows"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )

@@ -3,6 +3,7 @@
 package main
 
 import (
+	"douyin/cmd/api/biz/dal"
 	"douyin/cmd/api/biz/mw"
 	"douyin/cmd/api/biz/rpc"
 
@@ -17,6 +18,8 @@ func init() {
 	rpc.Init()
 
 	mw.InitJWT()
+
+	dal.Init()
 }
 func main() {
 	h := server.Default()

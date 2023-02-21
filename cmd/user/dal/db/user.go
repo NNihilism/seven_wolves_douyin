@@ -15,6 +15,7 @@ type User struct {
 	// 5: string password
 	gorm.Model
 	// ID            int64  `json:"id"`
+
 	Username      string `json:"username"`
 	Password      string `json:"password"`
 	FollowCount   int64  `json:"follow_count"`
@@ -33,6 +34,19 @@ func MGetUsers(ctx context.Context, userIDs []int64) ([]*User, error) {
 	}
 
 	if err := DB.WithContext(ctx).Where("id in ?", userIDs).Find(&res).Error; err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// MGetUsers multiple get list of user info
+func MGetUsersByNames(ctx context.Context, usernames []string) ([]*User, error) {
+	res := make([]*User, 0)
+	if len(usernames) == 0 {
+		return res, nil
+	}
+
+	if err := DB.WithContext(ctx).Where("username in ?", usernames).Find(&res).Error; err != nil {
 		return nil, err
 	}
 	return res, nil

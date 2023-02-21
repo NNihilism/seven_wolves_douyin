@@ -3,7 +3,7 @@
 package followservice
 
 import (
-	follows "douyin/idl/kitex_gen/follows"
+	follows "douyin/kitex_gen/follows"
 	server "github.com/cloudwego/kitex/server"
 )
 

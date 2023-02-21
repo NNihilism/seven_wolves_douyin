@@ -1,7 +1,7 @@
 package main
 
 import (
-	follows "douyin/idl/kitex_gen/follows/followservice"
+	follows "douyin/kitex_gen/follows/followservice"
 	"log"
 )
 

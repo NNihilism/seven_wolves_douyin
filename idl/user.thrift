@@ -14,19 +14,12 @@ struct BaseResp {
     3: i64 service_time
 }
 
-# struct UserBaseInfo {
-#     1: i64 id
-#     2: string username
-#     3: i64 follow_count
-#     4: i64 follower_count
-# }
-
 struct User {
     1: i64 id
     2: string username
     3: i64 follow_count
     4: i64 follower_count
-    5: string password
+    # 5: string password
 }
 
 struct CreateUserRequest {
@@ -40,7 +33,8 @@ struct CreateUserResponse {
 }
 
 struct MGetUserRequest {
-    1: list<i64> user_ids (vt.min_size = "1")
+    1: list<i64> user_ids 
+    2: list<string> usernames 
 }
 
 struct MGetUserResponse {
@@ -49,8 +43,8 @@ struct MGetUserResponse {
 }
 
 struct CheckUserRequest {
-    1: string username (vt.min_size = "1")
-    2: string password (vt.min_size = "1")
+    1: string username 
+    2: string password 
 }
 
 struct CheckUserResponse {

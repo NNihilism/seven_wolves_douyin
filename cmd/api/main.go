@@ -3,12 +3,26 @@
 package main
 
 import (
+	"douyin/cmd/api/biz/dal"
+	"douyin/cmd/api/biz/mw"
+	"douyin/cmd/api/biz/rpc"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
+// init() is automatically executed before main() without explicit call
+func init() {
+	// Init all rpc client
+	// The code for rpc initialization needs to be written in it
+	// Do not initialize separately here
+	rpc.Init()
+
+	mw.InitJWT()
+
+	dal.Init()
+}
 func main() {
 	h := server.Default()
-
 	register(h)
 	h.Spin()
 }

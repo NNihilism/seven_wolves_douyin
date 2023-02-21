@@ -1,4 +1,4 @@
-namespace go api
+namespace go follows
 
 struct UserReq {
     1: string name (api.query="username");
@@ -16,7 +16,6 @@ service UserService {
     UserResp Login(1: UserReq request) (api.get="/login");
     UserResp Register(1: UserReq request) (api.get="/register");
 }
-
 # struct CommentReq {
 #     1: string Name (api.query="name");
 # }

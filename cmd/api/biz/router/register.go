@@ -5,7 +5,7 @@ package router
 import (
 	"douyin/cmd/api/biz/router/api"
 	"douyin/cmd/api/biz/router/video"
-
+	"douyin/cmd/api/biz/router/follows"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -14,4 +14,5 @@ func GeneratedRegister(r *server.Hertz) {
 	//INSERT_POINT: DO NOT DELETE THIS LINE!
 	Api.Register(r)
 	video.Register(r)
+	follows.Register(r)
 }

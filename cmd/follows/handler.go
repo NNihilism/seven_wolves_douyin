@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"douyin/cmd/follows/dal"
 	follows "douyin/kitex_gen/follows"
 )
 
@@ -10,7 +11,7 @@ type FollowServiceImpl struct{}
 
 // RelationAction implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) RelationAction(ctx context.Context, req *follows.RelationActionRequest) (resp *follows.RelationActionResponse, err error) {
-	// TODO: Your code here...
+	dal.UpdateFollowStatus(ctx, req)
 	return
 }
 

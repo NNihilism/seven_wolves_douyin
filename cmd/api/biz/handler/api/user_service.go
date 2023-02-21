@@ -4,10 +4,8 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	api "douyin/cmd/api/biz/model/api"
-	"douyin/cmd/api/biz/mw"
 	"douyin/cmd/api/biz/rpc"
 	"douyin/kitex_gen/user"
 
@@ -18,43 +16,21 @@ import (
 // Login .
 // @router /login [GET]
 func Login(ctx context.Context, c *app.RequestContext) {
-	fmt.Println("here.....")
-	mw.JwtMiddleware.LoginHandler(ctx, c)
-	fmt.Println("here2.....")
+	var err error
+	var req api.UserReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	resp := new(api.UserResp)
 
-	// var err error
-	// var req api.UserReq
-	// err = c.BindAndValidate(&req)
-	// if err != nil {
-	// 	c.String(consts.StatusBadRequest, err.Error())
-	// 	return
-	// }
-
-	// rpcResp, err := rpc.CheckUser(context.Background(), &user.CheckUserRequest{
-	// 	Username: req.Name,
-	// 	Password: req.Pwd,
-	// })
-
-	// if err != nil {
-	// 	c.JSON(consts.StatusInternalServerError, nil)
-	// }
-
-	// resp := &api.UserResp{
-	// 	StatusCode: rpcResp.BaseResp.StatusCode,
-	// 	StatusMsg:  rpcResp.BaseResp.StatusMessage,
-	// 	UserID:     rpcResp.UserId,
-	// 	Token:      "", // token is ignored temporarily
-	// }
-
-	// c.JSON(consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }
 
 // Register .
 // @router /register [GET]
 func Register(ctx context.Context, c *app.RequestContext) {
-	// mw.JwtMiddleware.LoginHandler(ctx, c)
-	fmt.Println("here.....")
-
 	var err error
 	var req api.UserReq
 	err = c.BindAndValidate(&req)
@@ -63,7 +39,8 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	_, err = rpc.CreateUser(ctx, &user.CreateUserRequest{
+	// userClient.CreateUser()
+	rpcResp, err := rpc.CreateUser(ctx, &user.CreateUserRequest{
 		Username: req.Name,
 		Password: req.Pwd,
 	})
@@ -72,17 +49,13 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		c.JSON(consts.StatusInternalServerError, nil)
 	}
-	fmt.Println("here2.....")
 
-	mw.JwtMiddleware.LoginHandler(ctx, c)
-	fmt.Println("here3.....")
+	resp := &api.UserResp{
+		StatusCode: rpcResp.BaseResp.StatusCode,
+		StatusMsg:  rpcResp.BaseResp.StatusMessage,
+		UserID:     rpcResp.User.Id,
+		Token:      "", // token is ignored temporarily
+	}
 
-	// resp := &api.UserResp{
-	// 	StatusCode: rpcResp.BaseResp.StatusCode,
-	// 	StatusMsg:  rpcResp.BaseResp.StatusMessage,
-	// 	UserID:     rpcResp.User.Id,
-	// 	Token:      "", // token is ignored temporarily
-	// }
-
-	// c.JSON(consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, resp)
 }

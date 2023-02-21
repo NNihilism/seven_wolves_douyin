@@ -37,4 +37,16 @@ const (
 	VideoMySQLDefaultDSN     = "root:A1548223199@tcp(localhost:3306)/douyin?charset=utf8&parseTime=True&loc=Local"
 	VideoAndImageServicePort = ":8089"
 	VideoServerName          = "video_module"
+
+	// follows_module
+	FollowsDBUserName = "root"
+	FollowsPassword   = "admin123"
+	FollowserverHost  = "localhost"
+	FollowserverPort  = "3306"
+	FollowsDBName     = "douyin_follows"
+	FollowsDNS        = FollowsDBUserName + ":" + FollowsPassword + "@tcp(" + FollowserverHost + ":" + FollowserverPort + ")/" + FollowsDBName + "?charset=utf8&parseTime=True&loc=Local"
+	FollowTableName   = "follow"
+	FollowServiceName = "follow"
+	FollowServiceIp   = "localhost"
+	FollowServicePort = "8084"
 )

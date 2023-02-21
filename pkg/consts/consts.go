@@ -21,15 +21,8 @@ const (
 	UserTableName   = "user"
 	UserServiceAddr = ":9000"
 	// video module
-	VideoServerHost = "127.0.0.1"
-	VideoServerPort = ":8083"
-	VideoDBUserName = "root"
-	VideoDBPassword = "hjh123123"
-	VideoDBAddress  = "192.168.75.100:3306"
-	VideoDBName     = "douyin"
-	VideoTableName  = "video"
-	VideoDefaultDSN = VideoDBUserName + ":" + VideoDBPassword + "@tcp(" + VideoDBAddress + ")/" + VideoDBName + "?charset=utf8&parseTime=True&loc=Local"
-
+	VideoServerHost     = "127.0.0.1"
+	VideoServerPort     = ":8083"
 	VideoPlayUrlPrefix  = "http://" + BaseIP + VideoAndImageServicePort + "/douyin/video/"
 	VideoCoverUrlPrefix = "http://" + BaseIP + VideoAndImageServicePort + "/douyin/image/"
 	/*
@@ -39,7 +32,12 @@ const (
 	BaseIP                   = "127.0.0.1"
 	VideoStorePathPrefix     = "./cmd/video_play/static/video/" //视频存储的位置
 	ImageStorePathPrefix     = "./cmd/video_play/static/image/" //图片存储的位置
-	VideoMySQLDefaultDSN     = "root:A1548223199@tcp(localhost:3306)/douyin?charset=utf8&parseTime=True&loc=Local"
+	VideoMySQLDefaultDSN     = VideoDBUserName + VideoDBPassword + "@tcp(" + VideoDBAddress + ")/" + VideoDBName + "?charset=utf8&parseTime=True&loc=Local"
 	VideoAndImageServicePort = ":8089"
 	VideoServerName          = "video_module"
+
+	VideoDBUserName = "seven_wolve:"
+	VideoDBPassword = "a123123"
+	VideoDBAddress  = "43.138.245.151:3306"
+	VideoDBName     = "douyin"
 )

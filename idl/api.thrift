@@ -14,7 +14,7 @@ struct UserResp {
 
 service UserService {
     UserResp Login(1: UserReq request) (api.get="/login");
-    UserResp Register(1: UserReq request) (api.get="/register");
+    UserResp Register(1: UserReq request) (api.post="/register");
 }
 # struct CommentReq {
 #     1: string Name (api.query="name");

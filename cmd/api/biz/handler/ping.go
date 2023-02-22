@@ -4,15 +4,28 @@ package handler
 
 import (
 	"context"
+	"douyin/cmd/api/biz/model/api"
+	"douyin/pkg/consts"
+	"fmt"
+	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Ping .
 func Ping(ctx context.Context, c *app.RequestContext) {
-	c.JSON(consts.StatusOK, utils.H{
+	rawUserInfo, exist := c.Get(consts.IdentityKey)
+	if !exist {
+		fmt.Println("not exist....")
+	}
+	// 正确写法
+	userInfo := rawUserInfo.(*api.UserResp)
+	// 错误写法
+	// userInfo := rawUserInfo.(api.UserResp)
+
+	c.JSON(http.StatusOK, utils.H{
 		"message": "pong",
+		"UserID":  userInfo.UserID,
 	})
 }

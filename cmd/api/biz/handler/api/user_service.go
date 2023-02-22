@@ -6,6 +6,7 @@ import (
 	"context"
 
 	api "douyin/cmd/api/biz/model/api"
+	"douyin/cmd/api/biz/mw"
 	"douyin/cmd/api/biz/rpc"
 	"douyin/kitex_gen/user"
 
@@ -14,22 +15,13 @@ import (
 )
 
 // Login .
-// @router /login [GET]
+// @router /douyin/user/login [GET]
 func Login(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.UserReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-	resp := new(api.UserResp)
-
-	c.JSON(consts.StatusOK, resp)
+	mw.JwtMiddleware.LoginHandler(ctx, c)
 }
 
 // Register .
-// @router /register [GET]
+// @router /douyin/user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserReq
@@ -40,7 +32,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// userClient.CreateUser()
-	rpcResp, err := rpc.CreateUser(ctx, &user.CreateUserRequest{
+	_, err = rpc.CreateUser(ctx, &user.CreateUserRequest{
 		Username: req.Name,
 		Password: req.Pwd,
 	})
@@ -50,12 +42,5 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		c.JSON(consts.StatusInternalServerError, nil)
 	}
 
-	resp := &api.UserResp{
-		StatusCode: rpcResp.BaseResp.StatusCode,
-		StatusMsg:  rpcResp.BaseResp.StatusMessage,
-		UserID:     rpcResp.User.Id,
-		Token:      "", // token is ignored temporarily
-	}
-
-	c.JSON(consts.StatusOK, resp)
+	mw.JwtMiddleware.LoginHandler(ctx, c)
 }

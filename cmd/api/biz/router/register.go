@@ -4,8 +4,8 @@ package router
 
 import (
 	"douyin/cmd/api/biz/router/api"
-	"douyin/cmd/api/biz/router/video"
 	"douyin/cmd/api/biz/router/follows"
+	"douyin/cmd/api/biz/router/video"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

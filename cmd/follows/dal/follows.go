@@ -2,7 +2,8 @@ package dal
 
 import (
 	"context"
-	"douyin/kitex_gen/follows"
+	follows "douyin/kitex_gen/follows"
+	// "douyin/kitex_gen/follows"
 	"douyin/pkg/consts"
 	"fmt"
 	"strconv"
@@ -20,16 +21,47 @@ func (f *Follow) TableName() string {
 }
 
 // 关注/取关操作
-func UpdateFollowStatus(ctx context.Context, req *follows.RelationActionRequest) {
+func UpdateFollowStatus(ctx context.Context, req *follows.RelationActionRequest) (resp *follows.RelationActionResponse, err error) {
+	resp = new(follows.RelationActionResponse)
+	// resp.BaseResp = BaseResp.NewBaseResp()
 	actionType, _ := strconv.Atoi(req.ActionType)
 	if actionType == 1 {
-		follow := Follow{UserId: int(req.UserId), FollowerId: int(req.ToUserId)}
-		if err := DB.Create(&follow).Error; err != nil {
-			fmt.Println("关注失败", err)
+		var count int64
+		DB.Model(&Follow{}).Where("user_id = ? and follower_id = ?", req.UserId, req.ToUserId).Count(&count)
+		fmt.Println(count)
+		fmt.Println(req.UserId)
+		fmt.Println(req.ToUserId)
+		if count == 0 {
+			follow := Follow{UserId: int(req.UserId), FollowerId: int(req.ToUserId)}
+			if err = DB.Create(&follow).Error; err != nil {
+				fmt.Println("关注失败", err)
+			} else {
+				// user.BaseResp{StatusCode: err.ErrCode, StatusMessage: err.ErrMsg, ServiceTime: time.Now().Unix()}
+				baseResp := &follows.BaseResp{
+					StatusCode:    0,
+					StatusMessage: "关注成功",
+				}
+				resp.BaseResp = baseResp
+				return
+			}
 		}
 	} else {
-		if err := DB.Where("userid = ? and followerid = ?", int(req.UserId), int(req.ToUserId)).Delete(Follow{}).Error; err != nil {
+		if err = DB.Where("userid = ? and followerid = ?", int(req.UserId), int(req.ToUserId)).Delete(Follow{}).Error; err != nil {
 			fmt.Println("取关失败", err)
+		} else {
+			baseResp := &follows.BaseResp{
+				StatusCode:    0,
+				StatusMessage: "取关成功",
+			}
+			resp.BaseResp = baseResp
+			return
 		}
 	}
+	baseResp := &follows.BaseResp{
+		StatusCode:    -1,
+		StatusMessage: "关注/取关失败",
+	}
+	resp.BaseResp = baseResp
+	// fmt.Println(resp)
+	return
 }

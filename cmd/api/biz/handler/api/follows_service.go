@@ -7,18 +7,20 @@ import (
 	api "douyin/cmd/api/biz/model/follows"
 	"douyin/cmd/api/biz/rpc"
 	"douyin/kitex_gen/follows"
-	constt "douyin/pkg/consts"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	// constt "douyin/pkg/consts"
+	"strconv"
 )
 
 // RelationAction .
 // @router /douyin/relation/action/ [POST]
 func RelationAction(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req api.RelationActionRequest
-	err = c.BindAndValidate(&req)
+	err := c.BindAndValidate(&req)
+	i, _ := strconv.Atoi(c.Query("to_user_id"))
+	req.BaseReq.UserID = (int64)(i)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
@@ -31,36 +33,49 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 		c.JSON(consts.StatusInternalServerError, resp)
 		return
 	}
-	rawUserInfo, exist := c.Get(constt.IdentityKey)
-	if !exist {
-		fmt.Println("用户不存在")
-	}
-	userInfo := rawUserInfo.(*api.User)
 	request := &follows.RelationActionRequest{
-		UserId:     userInfo.ID,
+		UserId:     1,
 		ToUserId:   req.BaseReq.UserID,
 		Token:      req.BaseReq.Token,
 		ActionType: req.ActionType,
 	}
-
 	respp, err := rpc.ChangeRelationAction(ctx, request)
+	if err != nil {
+		fmt.Println(err)
+	}
 	c.JSON(consts.StatusOK, respp)
 }
 
 // GetFollowList .
 // @router /douyin/relation/follow/list/ [GET]
 func GetFollowList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.BaseRequest
-	err = c.BindAndValidate(&req)
+	var req api.Get
+	err := c.BindAndValidate(&req)
+	i, _ := strconv.Atoi(c.Query("to_user_id"))
+	req.BaseReq.UserID = (int64)(i)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-
-	resp := new(api.GetListResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	token := c.Query("token")
+	resp := new(api.BaseResponse)
+	if token == "" {
+		resp.StatusCode = -1
+		resp.StatusMessage = "token为空"
+		c.JSON(consts.StatusInternalServerError, resp)
+		return
+	}
+	request := &follows.RelationActionRequest{
+		UserId:     1,
+		ToUserId:   req.BaseReq.UserID,
+		Token:      req.BaseReq.Token,
+		ActionType: req.ActionType,
+	}
+	respp, err := rpc.ChangeRelationAction(ctx, request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	c.JSON(consts.StatusOK, respp)
 }
 
 // GetFollowerList .

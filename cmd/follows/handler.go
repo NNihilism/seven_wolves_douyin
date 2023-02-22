@@ -11,7 +11,7 @@ type FollowServiceImpl struct{}
 
 // RelationAction implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) RelationAction(ctx context.Context, req *follows.RelationActionRequest) (resp *follows.RelationActionResponse, err error) {
-	dal.UpdateFollowStatus(ctx, req)
+	resp, err = dal.UpdateFollowStatus(ctx, req)
 	return
 }
 

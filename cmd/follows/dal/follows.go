@@ -3,7 +3,6 @@ package dal
 import (
 	"context"
 	follows "douyin/kitex_gen/follows"
-	// "douyin/kitex_gen/follows"
 	"douyin/pkg/consts"
 	"fmt"
 	"strconv"
@@ -63,5 +62,29 @@ func UpdateFollowStatus(ctx context.Context, req *follows.RelationActionRequest)
 	}
 	resp.BaseResp = baseResp
 	// fmt.Println(resp)
+	return
+}
+
+// 获取关注列表
+func GetFollowList(ctx context.Context, req *follows.GetFollowListRequest) (resp *follows.GetFollowListResponse, err error) {
+	resp = new(follows.GetFollowListResponse)
+	userId := req.UserId
+	users := make([]*follows.User, 0)
+	DB.Where("id = ?", userId).Find(users)
+	resp.BaseResp.StatusCode = 0
+	resp.BaseResp.StatusMessage = "查询成功"
+	resp.Users = users
+	return
+}
+
+// 获取粉丝列表
+func GetFollowerList(ctx context.Context, req *follows.GetFollowerListRequest) (resp *follows.GetFollowerListResponse, err error) {
+	resp = new(follows.GetFollowerListResponse)
+	userId := req.UserId
+	users := make([]*follows.User, 0)
+	DB.Where("follower_id = ?", userId).Find(users)
+	resp.BaseResp.StatusCode = 0
+	resp.BaseResp.StatusMessage = "查询成功"
+	resp.Users = users
 	return
 }

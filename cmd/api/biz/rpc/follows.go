@@ -32,6 +32,43 @@ func ChangeRelationAction(ctx context.Context, req *follows.RelationActionReques
 	}
 	return resp, err
 }
+
+func GetFollows(ctx context.Context, req *follows.GetFollowListRequest) (resp *follows.GetFollowListResponse, err error) {
+	resp = new(follows.GetFollowListResponse)
+	resp, err = followClient.GetFollowList(ctx, req)
+	code := resp.BaseResp.GetStatusCode()
+	if err != nil {
+		resp.BaseResp.StatusCode = -1
+		resp.BaseResp.StatusMessage = "获取关注列表失败"
+		log.Fatal(err)
+		return
+	}
+	if code == 0 {
+		resp.BaseResp.StatusMessage = "获取关注列表成功"
+	} else {
+		resp.BaseResp.StatusMessage = "获取关注列表失败"
+	}
+	return resp, err
+}
+
+func GetFollowers(ctx context.Context, req *follows.GetFollowerListRequest) (resp *follows.GetFollowerListResponse, err error) {
+	resp = new(follows.GetFollowerListResponse)
+	resp, err = followClient.GetFollowerList(ctx, req)
+	code := resp.BaseResp.GetStatusCode()
+	if err != nil {
+		resp.BaseResp.StatusCode = -1
+		resp.BaseResp.StatusMessage = "获取关注列表失败"
+		log.Fatal(err)
+		return
+	}
+	if code == 0 {
+		resp.BaseResp.StatusMessage = "获取关注列表成功"
+	} else {
+		resp.BaseResp.StatusMessage = "获取关注列表失败"
+	}
+	return resp, err
+}
+
 func InitClient() {
 	c, err := followservice.NewClient(
 		consts.FollowServiceName,

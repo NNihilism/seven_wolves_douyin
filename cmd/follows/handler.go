@@ -17,7 +17,7 @@ func (s *FollowServiceImpl) RelationAction(ctx context.Context, req *follows.Rel
 
 // GetFollowList implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) GetFollowList(ctx context.Context, req *follows.GetFollowListRequest) (resp *follows.GetFollowListResponse, err error) {
-	// TODO: Your code here...
+	resp, err = dal.GetFollowList(ctx, req)
 	return
 }
 

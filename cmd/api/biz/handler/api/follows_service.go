@@ -49,29 +49,27 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 // GetFollowList .
 // @router /douyin/relation/follow/list/ [GET]
 func GetFollowList(ctx context.Context, c *app.RequestContext) {
-	var req api.Get
+	var req api.BaseRequest
 	err := c.BindAndValidate(&req)
-	i, _ := strconv.Atoi(c.Query("to_user_id"))
-	req.BaseReq.UserID = (int64)(i)
+	i, _ := strconv.Atoi(c.Query("user_id"))
+	req.UserID = (int64)(i)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 	token := c.Query("token")
-	resp := new(api.BaseResponse)
+	resp := new(api.GetListResponse)
 	if token == "" {
-		resp.StatusCode = -1
-		resp.StatusMessage = "token为空"
+		resp.BaseReq.StatusCode = -1
+		resp.BaseReq.StatusMessage = "token为空"
 		c.JSON(consts.StatusInternalServerError, resp)
 		return
 	}
-	request := &follows.RelationActionRequest{
-		UserId:     1,
-		ToUserId:   req.BaseReq.UserID,
-		Token:      req.BaseReq.Token,
-		ActionType: req.ActionType,
+	request := &follows.GetFollowListRequest{
+		UserId: 1,
+		Token:  req.Token,
 	}
-	respp, err := rpc.ChangeRelationAction(ctx, request)
+	respp, err := rpc.GetFollows(ctx, request)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -81,15 +79,29 @@ func GetFollowList(ctx context.Context, c *app.RequestContext) {
 // GetFollowerList .
 // @router /douyin/relation/follower/list/ [GET]
 func GetFollowerList(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req api.BaseRequest
-	err = c.BindAndValidate(&req)
+	err := c.BindAndValidate(&req)
+	i, _ := strconv.Atoi(c.Query("user_id"))
+	req.UserID = (int64)(i)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-
+	token := c.Query("token")
 	resp := new(api.GetListResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	if token == "" {
+		resp.BaseReq.StatusCode = -1
+		resp.BaseReq.StatusMessage = "token为空"
+		c.JSON(consts.StatusInternalServerError, resp)
+		return
+	}
+	request := &follows.GetFollowerListRequest{
+		UserId: 1,
+		Token:  req.Token,
+	}
+	respp, err := rpc.GetFollowers(ctx, request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	c.JSON(consts.StatusOK, respp)
 }

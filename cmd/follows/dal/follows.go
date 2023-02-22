@@ -70,7 +70,12 @@ func GetFollowList(ctx context.Context, req *follows.GetFollowListRequest) (resp
 	resp = new(follows.GetFollowListResponse)
 	userId := req.UserId
 	users := make([]*follows.User, 0)
-	DB.Where("id = ?", userId).Find(users)
+	followsId := make([]int, 0)
+	fmt.Println("------------------------------")
+	DB.Model(&Follow{}).Select("follower_id").Where("user_id = ?", userId).Scan(&followsId)
+	fmt.Println(followsId)
+	DB.Table("user").Where("id in ?", followsId).Find(&users)
+
 	resp.BaseResp = &follows.BaseResp{
 		StatusCode:    0,
 		StatusMessage: "查询成功",
@@ -84,9 +89,10 @@ func GetFollowerList(ctx context.Context, req *follows.GetFollowerListRequest) (
 	resp = new(follows.GetFollowerListResponse)
 	userId := req.UserId
 	followersId := make([]int, 0)
-	DB.Select("id").Where("follower_id = ?", userId).Find(followersId)
+	DB.Model(&Follow{}).Select("user_id").Where("follower_id = ?", userId).Scan(&followersId)
 	users := make([]*follows.User, 0)
-	DB.Where("id in ?", followersId).Find(users)
+	fmt.Println(followersId)
+	DB.Table("user").Where("id in ?", followersId).Find(&users)
 	resp.BaseResp = &follows.BaseResp{
 		StatusCode:    0,
 		StatusMessage: "查询成功",

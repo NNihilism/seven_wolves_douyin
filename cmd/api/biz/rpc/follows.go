@@ -57,14 +57,14 @@ func GetFollowers(ctx context.Context, req *follows.GetFollowerListRequest) (res
 	code := resp.BaseResp.GetStatusCode()
 	if err != nil {
 		resp.BaseResp.StatusCode = -1
-		resp.BaseResp.StatusMessage = "获取关注列表失败"
+		resp.BaseResp.StatusMessage = "获取粉丝列表失败"
 		log.Fatal(err)
 		return
 	}
 	if code == 0 {
-		resp.BaseResp.StatusMessage = "获取关注列表成功"
+		resp.BaseResp.StatusMessage = "获取粉丝列表成功"
 	} else {
-		resp.BaseResp.StatusMessage = "获取关注列表失败"
+		resp.BaseResp.StatusMessage = "获取粉丝列表失败"
 	}
 	return resp, err
 }

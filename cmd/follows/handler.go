@@ -24,6 +24,7 @@ func (s *FollowServiceImpl) GetFollowList(ctx context.Context, req *follows.GetF
 // GetFollowerList implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) GetFollowerList(ctx context.Context, req *follows.GetFollowerListRequest) (resp *follows.GetFollowerListResponse, err error) {
 	// TODO: Your code here...
+	resp, err = dal.GetFollowerList(ctx, req)
 	return
 }
 

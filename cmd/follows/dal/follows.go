@@ -81,8 +81,10 @@ func GetFollowList(ctx context.Context, req *follows.GetFollowListRequest) (resp
 func GetFollowerList(ctx context.Context, req *follows.GetFollowerListRequest) (resp *follows.GetFollowerListResponse, err error) {
 	resp = new(follows.GetFollowerListResponse)
 	userId := req.UserId
+	followersId := make([]int, 0)
+	DB.Select("id").Where("follower_id = ?", userId).Find(followersId)
 	users := make([]*follows.User, 0)
-	DB.Where("follower_id = ?", userId).Find(users)
+	DB.Where("id in ?", followersId).Find(users)
 	resp.BaseResp.StatusCode = 0
 	resp.BaseResp.StatusMessage = "查询成功"
 	resp.Users = users

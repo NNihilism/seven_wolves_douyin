@@ -3,10 +3,10 @@ package main
 import (
 	"douyin/cmd/user/dal"
 	user "douyin/kitex_gen/user/userservice"
+	"douyin/pkg/consts"
+	"fmt"
 	"log"
 	"net"
-
-	"douyin/pkg/consts"
 
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -16,7 +16,9 @@ import (
 )
 
 func init() {
+	fmt.Println("begin创建数据库表")
 	dal.Init()
+	fmt.Println("after创建数据库表")
 }
 func main() {
 	// register service

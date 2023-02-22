@@ -11,13 +11,13 @@ type FollowServiceImpl struct{}
 
 // RelationAction implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) RelationAction(ctx context.Context, req *follows.RelationActionRequest) (resp *follows.RelationActionResponse, err error) {
-	dal.UpdateFollowStatus(ctx, req)
+	resp, err = dal.UpdateFollowStatus(ctx, req)
 	return
 }
 
 // GetFollowList implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) GetFollowList(ctx context.Context, req *follows.GetFollowListRequest) (resp *follows.GetFollowListResponse, err error) {
-	// TODO: Your code here...
+	resp, err = dal.GetFollowList(ctx, req)
 	return
 }
 

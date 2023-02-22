@@ -17,7 +17,7 @@ const (
 	ETCDAddress = "127.0.0.1:2379"
 
 	// user module
-	UserDefaultDSN  = "root:root@tcp(localhost:3300)/douyin?charset=utf8&parseTime=True&loc=Local"
+	UserDefaultDSN  = "root:abc123@tcp(172.23.112.1:3306)/douyin?charset=utf8&parseTime=True&loc=Local"
 	UserTableName   = "user"
 	UserServiceAddr = ":9000"
 	// video module
@@ -44,14 +44,14 @@ const (
 	VideoServerName          = "video_module"
 
 	// follows_module
-	FollowsDBUserName = "root"
-	FollowsPassword   = "admin123"
-	FollowserverHost  = "localhost"
-	FollowserverPort  = "3306"
-	FollowsDBName     = "douyin_follows"
-	FollowsDNS        = FollowsDBUserName + ":" + FollowsPassword + "@tcp(" + FollowserverHost + ":" + FollowserverPort + ")/" + FollowsDBName + "?charset=utf8&parseTime=True&loc=Local"
-	FollowTableName   = "follow"
-	FollowServiceName = "follow"
-	FollowServiceIp   = "localhost"
-	FollowServicePort = "8084"
+	FollowsDBUserName  = "root"
+	FollowsPassword    = "abc123"
+	FollowserverDBHost = "172.23.112.1"
+	FollowserverPort   = "3306"
+	FollowsDBName      = "douyin"
+	FollowsDNS         = FollowsDBUserName + ":" + FollowsPassword + "@tcp(" + FollowserverDBHost + ":" + FollowserverPort + ")/" + FollowsDBName + "?charset=utf8&parseTime=True&loc=Local"
+	FollowTableName    = "follow"
+	FollowServiceName  = "follows"
+	FollowServicePort  = ":8084"
+	FollowserverHost   = ""
 )

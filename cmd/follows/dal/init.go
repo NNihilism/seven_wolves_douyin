@@ -6,27 +6,27 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gorm.io/plugin/opentelemetry/logging/logrus"
+	// "gorm.io/plugin/opentelemetry/logging/logrus"
 	"gorm.io/plugin/opentelemetry/tracing"
-	"time"
+	// "time"
 )
 
 var DB *gorm.DB
 
 func Init() {
 	var err error
-	gormlogrus := logger.New(
-		logrus.NewWriter(),
-		logger.Config{
-			SlowThreshold: time.Millisecond,
-			Colorful:      false,
-			LogLevel:      logger.Info,
-		},
-	)
+	// gormlogrus := logger.New(
+	// 	logrus.NewWriter(),
+	// 	logger.Config{
+	// 		SlowThreshold: time.Millisecond,
+	// 		Colorful:      false,
+	// 		LogLevel:      logger.Info,
+	// 	},
+	// )
 	DB, err = gorm.Open(mysql.Open(consts.FollowsDNS),
 		&gorm.Config{
 			PrepareStmt: true,
-			Logger:      gormlogrus,
+			Logger:      logger.Default.LogMode(logger.Info),
 		},
 	)
 	if err != nil {

@@ -46,7 +46,7 @@ const (
 	// follows_module
 	FollowsDBUserName  = "root"
 	FollowsPassword    = "abc123"
-	FollowserverDBHost = "172.23.112.1"
+	FollowserverDBHost = "regfsdfg1"
 	FollowserverPort   = "3306"
 	FollowsDBName      = "douyin"
 	FollowsDNS         = FollowsDBUserName + ":" + FollowsPassword + "@tcp(" + FollowserverDBHost + ":" + FollowserverPort + ")/" + FollowsDBName + "?charset=utf8&parseTime=True&loc=Local"
